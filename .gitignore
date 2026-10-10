@@ -1,0 +1,8 @@
+/target
+
+# Local personal data
+/resume.md
+/history/
+
+# Ephemeral Rolign working data
+/.rolign-tmp/
