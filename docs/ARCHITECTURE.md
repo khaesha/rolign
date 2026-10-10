@@ -267,7 +267,7 @@ Job content is external, untrusted data. The host instructions must delimit it a
 
 ### AI output
 
-AI output is untrusted until deserialized and validated. Required fields, string limits, list limits, enum values, and score ranges must be checked before writing history.
+AI output is untrusted until deserialized and validated. Required fields, enum values, URL schemes, score ranges, and record structure must be checked before writing history. The MVP does not impose string or list-length caps; local filesystem and deserialization failures remain actionable errors.
 
 ### Filesystem
 

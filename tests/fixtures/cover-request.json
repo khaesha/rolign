@@ -1,0 +1,12 @@
+{
+  "kind": "cover-letter-only",
+  "company": "Example Systems",
+  "job_title": "Platform Engineer",
+  "job_url": null,
+  "job_description": "Build reliable local developer tools using Rust.",
+  "ai_host": "codex",
+  "analysis": null,
+  "cover_letter": {
+    "body": "Dear hiring team,\n\nI am interested in the Platform Engineer role.\n\nSincerely,\nExample Candidate"
+  }
+}
