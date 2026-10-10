@@ -86,9 +86,16 @@ pub fn read_resume(workspace: &Path) -> Result<String, String> {
 }
 
 pub fn save(workspace: &Path, draft: &RecordDraft) -> Result<SaveResult, String> {
+    save_at(workspace, draft, OffsetDateTime::now_utc())
+}
+
+fn save_at(
+    workspace: &Path,
+    draft: &RecordDraft,
+    now: OffsetDateTime,
+) -> Result<SaveResult, String> {
     let workspace = workspace_root(workspace)?;
     let history = history_dir(&workspace, true)?;
-    let now = OffsetDateTime::now_utc();
     let id = record_id(now, &draft.company, &draft.job_title);
     let final_dir = history.join(&id);
     if final_dir.exists() {
@@ -498,8 +505,9 @@ mod tests {
     fn collision_does_not_overwrite_existing_record() {
         let workspace = TestWorkspace::new();
         let draft = workspace.draft();
-        save(&workspace.0, &draft).unwrap();
-        assert!(save(&workspace.0, &draft).is_err());
+        let time = OffsetDateTime::UNIX_EPOCH;
+        save_at(&workspace.0, &draft, time).unwrap();
+        assert!(save_at(&workspace.0, &draft, time).is_err());
         assert_eq!(list(&workspace.0).unwrap().records.len(), 1);
     }
 
