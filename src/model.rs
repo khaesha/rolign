@@ -148,7 +148,7 @@ fn required(field: &str, value: String) -> Result<String, String> {
     Ok(value)
 }
 
-fn validate_url(value: String) -> Result<String, String> {
+pub fn validate_url(value: String) -> Result<String, String> {
     let parsed =
         Url::parse(&value).map_err(|_| "job_url must be a valid HTTP(S) URL".to_owned())?;
     if !matches!(parsed.scheme(), "http" | "https") || parsed.host_str().is_none() {

@@ -6,6 +6,12 @@ use std::{env, io, path::PathBuf, process};
 
 use serde::Serialize;
 
+enum Command {
+    Save(PathBuf),
+    List(PathBuf),
+    ValidateUrl(String),
+}
+
 fn main() {
     if let Err(error) = run() {
         eprintln!("rolign: {error}");
@@ -14,9 +20,8 @@ fn main() {
 }
 
 fn run() -> Result<(), String> {
-    let (command, workspace) = parse_args()?;
-    match command.as_str() {
-        "save" => {
+    match parse_args()? {
+        Command::Save(workspace) => {
             let request = serde_json::from_reader(io::stdin())
                 .map_err(|error| format!("invalid JSON input: {error}"))?;
             let root = storage::workspace_root(&workspace)?;
@@ -24,14 +29,29 @@ fn run() -> Result<(), String> {
             let draft = model::validate_request(request, resume)?;
             write_json(&storage::save(&root, &draft)?)
         }
-        "list" => write_json(&storage::list(&workspace)?),
-        _ => unreachable!("arguments are validated by parse_args"),
+        Command::List(workspace) => write_json(&storage::list(&workspace)?),
+        Command::ValidateUrl(url) => write_json(&ValidatedUrl {
+            url: model::validate_url(url)?,
+        }),
     }
 }
 
-fn parse_args() -> Result<(String, PathBuf), String> {
+#[derive(Serialize)]
+struct ValidatedUrl {
+    url: String,
+}
+
+fn parse_args() -> Result<Command, String> {
     let mut args = env::args().skip(1);
     let command = args.next().ok_or_else(usage)?;
+    if command == "validate-url" {
+        let url = args.next().ok_or_else(usage)?;
+        return if args.next().is_none() {
+            Ok(Command::ValidateUrl(url))
+        } else {
+            Err(usage())
+        };
+    }
     if command != "save" && command != "list" {
         return Err(usage());
     }
@@ -47,11 +67,15 @@ fn parse_args() -> Result<(String, PathBuf), String> {
     if args.next().is_some() {
         return Err(usage());
     }
-    Ok((command, workspace))
+    Ok(if command == "save" {
+        Command::Save(workspace)
+    } else {
+        Command::List(workspace)
+    })
 }
 
 fn usage() -> String {
-    "usage: rolign <save|list> [--workspace PATH]".to_owned()
+    "usage: rolign <save|list> [--workspace PATH] | rolign validate-url <URL>".to_owned()
 }
 
 fn write_json(value: &impl Serialize) -> Result<(), String> {

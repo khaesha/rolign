@@ -8,6 +8,31 @@ use std::{
 static NEXT_DIRECTORY: AtomicUsize = AtomicUsize::new(0);
 
 #[test]
+fn validates_http_urls_without_creating_history() {
+    let output = Command::new(env!("CARGO_BIN_EXE_rolign"))
+        .args(["validate-url", "https://example.test/job/123"])
+        .output()
+        .unwrap();
+
+    assert!(output.status.success());
+    assert_eq!(
+        serde_json::from_slice::<serde_json::Value>(&output.stdout).unwrap()["url"],
+        "https://example.test/job/123"
+    );
+}
+
+#[test]
+fn rejects_invalid_urls_before_retrieval() {
+    let output = Command::new(env!("CARGO_BIN_EXE_rolign"))
+        .args(["validate-url", "ftp://example.test/job/123"])
+        .output()
+        .unwrap();
+
+    assert!(!output.status.success());
+    assert!(String::from_utf8_lossy(&output.stderr).contains("valid HTTP(S) URL"));
+}
+
+#[test]
 fn saves_fixture_input_and_lists_it() {
     let workspace = env::temp_dir().join(format!(
         "rolign-cli-test-{}-{}",
