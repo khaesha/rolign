@@ -18,7 +18,8 @@ letter. Rust rejects unknown fields.
 
 Rules:
 
-- `kind` must be `cover-letter-only`; `ai_host` must be `codex`.
+- `kind` must be `cover-letter-only`; `ai_host` must match the active adapter:
+  `codex`, `claude`, or `gemini`.
 - `company`, `job_title`, `job_description`, and `cover_letter.body` must be
   non-empty.
 - `job_url` is `null` or a valid HTTP(S) URL.

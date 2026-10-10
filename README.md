@@ -8,7 +8,8 @@ retrieve job pages, or send telemetry itself.
 
 ## Status
 
-Rust storage foundation. Host-facing Rolign workflows arrive in later phases.
+Codex, Claude Code, and Gemini CLI adapters share one local workflow and Rust
+validation path.
 
 ## Core commands
 
@@ -22,13 +23,22 @@ rtk cargo run -- list --workspace .
 rtk cargo run -- validate-url https://example.test/job/123
 ```
 
-In Codex, use `$rolign` for help, `$rolign analyze` for manual analysis, or
-`$rolign analyze https://example.test/job/123` for URL-first input, or
-`$rolign cover [URL]` for a saved draft without scoring. `$rolign tracker`
-renders saved analysis and cover-only records; ask to open a returned record ID
-to view its saved Markdown files. Codex validates URLs, retrieves a public page
-once when available, asks for confirmation, and falls back to pasted text
-without saving a premature record.
+## Host usage
+
+Install and authenticate the host CLI, start it from this project, and trust the
+workspace before approving normal local tool operations.
+
+| Host | Invocation |
+| --- | --- |
+| Codex | `$rolign analyze [URL]` |
+| Claude Code | `/rolign analyze [URL]` |
+| Gemini CLI | `/rolign analyze [URL]` |
+
+All hosts also support `cover [URL]` and `tracker`. Tracker accepts a follow-up
+`open <record-id>` request. Gemini users should run `/commands reload` after
+pulling adapter changes or restart Gemini CLI. Each host validates URLs,
+retrieves a public page once when available, asks for confirmation, and falls
+back to pasted text without saving a premature record.
 
 ## Development
 
