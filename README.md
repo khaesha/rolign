@@ -21,8 +21,9 @@ rtk cargo run -- save --workspace . < tests/fixtures/analysis-request.json
 rtk cargo run -- list --workspace .
 ```
 
-These are core commands, not the final `$rolign` workflow. The host adapter
-arrives in Phase 2.
+In Codex, use `$rolign` for help or `$rolign analyze` for the manual analysis
+workflow. URL retrieval, cover-only, and tracker workflows arrive in later
+phases.
 
 ## Development
 

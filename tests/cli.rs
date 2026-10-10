@@ -50,3 +50,29 @@ fn saves_fixture_input_and_lists_it() {
 
     fs::remove_dir_all(workspace).unwrap();
 }
+
+#[test]
+fn malformed_input_creates_no_history() {
+    let workspace = env::temp_dir().join(format!(
+        "rolign-cli-invalid-test-{}-{}",
+        std::process::id(),
+        NEXT_DIRECTORY.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir_all(&workspace).unwrap();
+    fs::write(workspace.join("resume.md"), "# Synthetic resume\n").unwrap();
+
+    let mut save = Command::new(env!("CARGO_BIN_EXE_rolign"))
+        .args(["save", "--workspace", workspace.to_str().unwrap()])
+        .stdin(Stdio::piped())
+        .spawn()
+        .unwrap();
+    save.stdin
+        .take()
+        .unwrap()
+        .write_all(br#"{"kind":"analysis"}"#)
+        .unwrap();
+    assert!(!save.wait().unwrap().success());
+    assert!(!workspace.join("history").exists());
+
+    fs::remove_dir_all(workspace).unwrap();
+}
