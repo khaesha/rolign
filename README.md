@@ -23,10 +23,12 @@ rtk cargo run -- validate-url https://example.test/job/123
 ```
 
 In Codex, use `$rolign` for help, `$rolign analyze` for manual analysis, or
-`$rolign analyze https://example.test/job/123` for URL-first input. Codex
-validates the URL, retrieves a public page once when available, asks for
-confirmation, and falls back to pasted text without saving a premature record.
-Cover-only and tracker workflows arrive in later phases.
+`$rolign analyze https://example.test/job/123` for URL-first input, or
+`$rolign cover [URL]` for a saved draft without scoring. `$rolign tracker`
+renders saved analysis and cover-only records; ask to open a returned record ID
+to view its saved Markdown files. Codex validates URLs, retrieves a public page
+once when available, asks for confirmation, and falls back to pasted text
+without saving a premature record.
 
 ## Development
 
