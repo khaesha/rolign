@@ -19,11 +19,14 @@ The development boundary accepts one JSON request on standard input. It reads
 ```bash
 rtk cargo run -- save --workspace . < tests/fixtures/analysis-request.json
 rtk cargo run -- list --workspace .
+rtk cargo run -- validate-url https://example.test/job/123
 ```
 
-In Codex, use `$rolign` for help or `$rolign analyze` for the manual analysis
-workflow. URL retrieval, cover-only, and tracker workflows arrive in later
-phases.
+In Codex, use `$rolign` for help, `$rolign analyze` for manual analysis, or
+`$rolign analyze https://example.test/job/123` for URL-first input. Codex
+validates the URL, retrieves a public page once when available, asks for
+confirmation, and falls back to pasted text without saving a premature record.
+Cover-only and tracker workflows arrive in later phases.
 
 ## Development
 
