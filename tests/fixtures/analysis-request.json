@@ -1,0 +1,33 @@
+{
+  "kind": "analysis",
+  "company": "Example Systems",
+  "job_title": "Platform Engineer",
+  "job_url": "https://example.test/jobs/platform",
+  "job_description": "Build reliable local developer tools using Rust.",
+  "ai_host": "codex",
+  "analysis": {
+    "categories": {
+      "required_qualifications": 32,
+      "skills_and_responsibilities": 24,
+      "relevant_achievements": 15,
+      "keywords_and_clarity": 7
+    },
+    "strengths": [
+      {
+        "finding": "Rust experience",
+        "evidence": "Resume lists Rust among technical skills."
+      }
+    ],
+    "gaps": [
+      {
+        "finding": "Platform operations",
+        "explanation": "Resume does not show production operations ownership."
+      }
+    ],
+    "missing_keywords": ["observability"],
+    "recommendations": ["Explain testing work with concrete project context."]
+  },
+  "cover_letter": {
+    "body": "Dear hiring team,\n\nI am interested in the Platform Engineer role.\n\nSincerely,\nExample Candidate"
+  }
+}

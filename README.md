@@ -8,7 +8,21 @@ retrieve job pages, or send telemetry itself.
 
 ## Status
 
-Foundation only. Rolign commands and history storage arrive in later phases.
+Rust storage foundation. Host-facing Rolign workflows arrive in later phases.
+
+## Core commands
+
+The development boundary accepts one JSON request on standard input. It reads
+`resume.md` from the workspace and writes Markdown-only records under
+`history/`.
+
+```bash
+rtk cargo run -- save --workspace . < tests/fixtures/analysis-request.json
+rtk cargo run -- list --workspace .
+```
+
+These are core commands, not the final `$rolign` workflow. The host adapter
+arrives in Phase 2.
 
 ## Development
 
@@ -19,6 +33,6 @@ rtk cargo clippy --all-targets --all-features -- -D warnings
 rtk cargo test
 ```
 
-Copy `resume.md.example` to `resume.md` only when a later phase requires a
-resume. `resume.md`, `history/`, and `.rolign-tmp/` are intentionally ignored
-because they can contain personal data.
+Copy `resume.md.example` to `resume.md` before using `save`. `resume.md`,
+`history/`, and `.rolign-tmp/` are intentionally ignored because they can
+contain personal data.
