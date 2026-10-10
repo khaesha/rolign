@@ -1,6 +1,8 @@
 const CANONICAL_SKILL: &str = include_str!("../skills/rolign/SKILL.md");
 const CODEX_ADAPTER: &str = include_str!("../.codex/skills/rolign/SKILL.md");
 const ANALYSIS_CONTRACT: &str = include_str!("../skills/rolign/references/analysis-contract.md");
+const COVER_ONLY_CONTRACT: &str =
+    include_str!("../skills/rolign/references/cover-only-contract.md");
 const COVER_RULES: &str = include_str!("../skills/rolign/references/cover-letter-rules.md");
 const JOB_PAGE: &str = include_str!("fixtures/public-job-page.html");
 
@@ -73,4 +75,32 @@ fn analysis_contract_matches_rust_save_fields() {
     }
     assert!(!ANALYSIS_CONTRACT.contains("\"total\""));
     assert!(COVER_RULES.contains("only facts supported by `resume.md`"));
+}
+
+#[test]
+fn cover_only_contract_excludes_analysis() {
+    for field in [
+        "cover-letter-only",
+        "job_description",
+        "analysis\": null",
+        "cover_letter",
+    ] {
+        assert!(COVER_ONLY_CONTRACT.contains(field));
+    }
+    assert!(COVER_ONLY_CONTRACT.contains("do not include categories, a score, or analysis"));
+}
+
+#[test]
+fn tracker_workflow_renders_and_opens_only_listed_records() {
+    for instruction in [
+        "Markdown table",
+        "Score, Job link, and ID",
+        "show `—` for a missing score or job URL",
+        "corrupt-record warnings",
+        "open <record-id>",
+        "exact returned ID",
+        "Never accept a path or an ID not returned by `list`",
+    ] {
+        assert!(CANONICAL_SKILL.contains(instruction));
+    }
 }
