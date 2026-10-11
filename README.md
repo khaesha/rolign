@@ -6,10 +6,23 @@ The active AI host handles analysis and drafting. The Rust core will validate
 results and save local Markdown history. Rolign does not call model APIs,
 retrieve job pages, or send telemetry itself.
 
-## Status
+## Quick start
 
-Codex, Claude Code, and Gemini CLI adapters share one local workflow and Rust
-validation path.
+Requirements: stable Rust plus one authenticated host CLI. Install and sign in
+to your preferred host before opening this repository:
+
+- [Codex CLI](https://help.openai.com/en/articles/11096431)
+- [Claude Code](https://code.claude.com/docs/en/slash-commands)
+- [Gemini CLI](https://geminicli.com/docs/get-started/)
+
+```bash
+git clone https://github.com/khaesha/rolign.git
+cd rolign
+cp resume.md.example resume.md
+cargo test
+```
+
+Edit `resume.md` with your own Markdown resume. Rolign never changes it.
 
 ## Core commands
 
@@ -23,10 +36,10 @@ rtk cargo run -- list --workspace .
 rtk cargo run -- validate-url https://example.test/job/123
 ```
 
-## Host usage
+## Use Rolign
 
-Install and authenticate the host CLI, start it from this project, and trust the
-workspace before approving normal local tool operations.
+Start an authenticated host from this project, trust the workspace, and approve
+normal local tool operations.
 
 | Host | Invocation |
 | --- | --- |
@@ -40,6 +53,30 @@ pulling adapter changes or restart Gemini CLI. Each host validates URLs,
 retrieves a public page once when available, asks for confirmation, and falls
 back to pasted text without saving a premature record.
 
+Commands:
+
+```text
+rolign
+rolign analyze [URL]
+rolign cover [URL]
+rolign tracker
+```
+
+## Privacy and limits
+
+- `resume.md`, `history/`, and `.rolign-tmp/` are ignored by Git. Do not commit
+  resumes, saved records, temporary payloads, or credentials.
+- The selected host receives the resume and job description needed for the
+  requested workflow. Rust makes no model calls, web requests, telemetry, or
+  background network activity.
+- Public job-page retrieval is attempted once only. Login-gated, incomplete,
+  or unavailable pages require pasted job text.
+- MVP scope excludes PDF/DOCX input, resume rewriting, job submission,
+  databases, cloud sync, and a standalone UI.
+
+See [MVP verification](docs/MVP-VERIFICATION.md) for release evidence and the
+remaining authenticated-host release gate.
+
 ## Development
 
 ```bash
@@ -49,6 +86,5 @@ rtk cargo clippy --all-targets --all-features -- -D warnings
 rtk cargo test
 ```
 
-Copy `resume.md.example` to `resume.md` before using `save`. `resume.md`,
-`history/`, and `.rolign-tmp/` are intentionally ignored because they can
-contain personal data.
+`resume.md`, `history/`, and `.rolign-tmp/` are intentionally ignored because
+they can contain personal data.

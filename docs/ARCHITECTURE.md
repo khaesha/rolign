@@ -242,6 +242,13 @@ score: 78
 
 All persistent user data is Markdown. Temporary JSON passed between the host and Rust may exist only on standard input or in an ignored temporary location and must not become history.
 
+### Schema migrations
+
+Completed records are immutable and must remain readable. Increment
+`schema_version` only for an incompatible persisted-format change. Before
+writing a newer version, add reader support and synthetic fixtures for every
+supported prior version; never rewrite existing history in place.
+
 ## 9. Atomicity and data safety
 
 Record creation uses this commit protocol:
