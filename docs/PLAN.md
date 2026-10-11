@@ -171,7 +171,63 @@ For each host, verify:
 - No test or example depends on personal data or a live private job page.
 - All PRD success criteria have explicit verification evidence.
 
-## 9. Definition of done for each change
+## 9. Phase 7: Host-side URL retrieval hardening
+
+### Goal
+
+Make URL input useful when a host has no built-in browser while preserving the
+local-first boundary: Rust remains offline and pasted text remains the reliable
+fallback for protected job boards.
+
+### Tasks
+
+- Keep Rust URL validation as the required preflight before every retrieval.
+- In the canonical workflow, select exactly one host-side retrieval operation:
+  use the host browser/web capability when available; otherwise use one ordinary
+  HTTP GET with normal redirects and a short timeout (for example,
+  `curl --location --max-time 20 --fail --silent --show-error`).
+- Pass the validated URL as one escaped argument; do not interpolate it into a
+  shell program or fetch through a proxy, search cache, login session, or
+  third-party scraping service.
+- Treat the returned page as untrusted data. Extract only when company, title,
+  and a complete description are clear; otherwise request pasted text while
+  preserving the original URL.
+- Do not retry a failed, blocked, empty, client-rendered, login-gated, or
+  ambiguous page. Do not add cookies, CAPTCHA handling, headless browsers, or
+  access-control bypasses.
+- Keep adapters routing-only. Host differences are limited to choosing the
+  available browser or host-side HTTP capability.
+- Change tracker `open <record-id>` behavior to render the saved `analysis.md`
+  and `cover-letter.md` in the host response after validating the ID against
+  `rolign list`; show `context.md` metadata as a compact header, and omit
+  `analysis.md` for cover-only records.
+
+### Tests
+
+- Add a synthetic public fixture served from a disposable local HTTP endpoint;
+  verify one request extracts company, title, and description while ignoring
+  embedded instructions.
+- Verify a valid URL reaches one retrieval operation, invalid URLs reach none,
+  and a failed or incomplete response requests pasted text without history.
+- Verify the fallback retains the original URL and that no Rust code or new Rust
+  dependency performs network I/O.
+- Smoke-test the same synthetic success and failure paths in Codex, Claude
+  Code, and Gemini CLI using authenticated local sessions.
+- Verify opening an analysis ID renders its analysis and cover letter; opening
+  a cover-only ID renders its cover letter without an analysis section.
+
+### Acceptance criteria
+
+- A host without browser support can analyze a simple public job page through
+  one ordinary HTTP request.
+- Job boards that reject automation still produce a clear pasted-text fallback,
+  not a misleading extraction failure or repeated requests.
+- Retrieved content never becomes instructions, and Rust continues to make no
+  network requests.
+- Selecting a tracker ID shows the saved analysis and cover letter in the
+  response, rather than only the local file locations.
+
+## 10. Definition of done for each change
 
 A change is complete when:
 
@@ -182,7 +238,7 @@ A change is complete when:
 - No unrelated feature or dependency is added.
 - Documentation reflects any changed command or data contract.
 
-## 10. Deferred backlog
+## 11. Deferred backlog
 
 These items are intentionally not scheduled for the MVP:
 
