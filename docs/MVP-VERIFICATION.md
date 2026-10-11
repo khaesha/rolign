@@ -15,6 +15,9 @@ These checks cover URL validation, score calculation, required fields, path
 containment, Markdown rendering, atomic history writes, cover-only records,
 tracker ordering, and corrupt-record warnings.
 
+Phase 6 evidence, 2026-10-11: all commands above passed; `cargo test` ran 25
+tests across three suites.
+
 ## Fresh-clone check
 
 Use a new temporary clone with only synthetic data:
@@ -28,12 +31,20 @@ Use a new temporary clone with only synthetic data:
 The fixture resume, job text, job page, and cover letter are synthetic. No test
 uses a personal resume or a live/private job posting.
 
+Phase 6 evidence, 2026-10-11: a fresh local clone of the release branch copied
+only `resume.md.example`, passed all automated checks, validated
+`https://example.test/job/123`, and saved/listed the synthetic analysis fixture.
+
 ## Privacy and ignore audit
 
 Verify that Git ignores `resume.md`, `history/`, and `.rolign-tmp/`, and review
 tracked files for credentials, personal contact details, personal resumes, and
 live/private job URLs. The expected tracked fixture URL is
 `https://example.test/job/123`.
+
+Phase 6 evidence, 2026-10-11: all three expected paths were ignored, and the
+tracked-content scan found only policy/documentation references to personal or
+private data.
 
 ## PRD success evidence
 
