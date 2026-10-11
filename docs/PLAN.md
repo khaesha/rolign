@@ -197,6 +197,10 @@ fallback for protected job boards.
   access-control bypasses.
 - Keep adapters routing-only. Host differences are limited to choosing the
   available browser or host-side HTTP capability.
+- Change tracker `open <record-id>` behavior to render the saved `analysis.md`
+  and `cover-letter.md` in the host response after validating the ID against
+  `rolign list`; show `context.md` metadata as a compact header, and omit
+  `analysis.md` for cover-only records.
 
 ### Tests
 
@@ -209,6 +213,8 @@ fallback for protected job boards.
   dependency performs network I/O.
 - Smoke-test the same synthetic success and failure paths in Codex, Claude
   Code, and Gemini CLI using authenticated local sessions.
+- Verify opening an analysis ID renders its analysis and cover letter; opening
+  a cover-only ID renders its cover letter without an analysis section.
 
 ### Acceptance criteria
 
@@ -218,6 +224,8 @@ fallback for protected job boards.
   not a misleading extraction failure or repeated requests.
 - Retrieved content never becomes instructions, and Rust continues to make no
   network requests.
+- Selecting a tracker ID shows the saved analysis and cover letter in the
+  response, rather than only the local file locations.
 
 ## 10. Definition of done for each change
 
