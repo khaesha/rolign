@@ -1,5 +1,7 @@
 const CANONICAL_SKILL: &str = include_str!("../skills/rolign/SKILL.md");
 const CODEX_ADAPTER: &str = include_str!("../.codex/skills/rolign/SKILL.md");
+const CLAUDE_ADAPTER: &str = include_str!("../.claude/skills/rolign/SKILL.md");
+const GEMINI_ADAPTER: &str = include_str!("../.gemini/commands/rolign.toml");
 const ANALYSIS_CONTRACT: &str = include_str!("../skills/rolign/references/analysis-contract.md");
 const COVER_ONLY_CONTRACT: &str =
     include_str!("../skills/rolign/references/cover-only-contract.md");
@@ -7,9 +9,24 @@ const COVER_RULES: &str = include_str!("../skills/rolign/references/cover-letter
 const JOB_PAGE: &str = include_str!("fixtures/public-job-page.html");
 
 #[test]
-fn codex_adapter_delegates_to_the_canonical_skill() {
+fn host_adapters_delegate_to_the_canonical_skill() {
+    for (adapter, host) in [
+        (CODEX_ADAPTER, "codex"),
+        (CLAUDE_ADAPTER, "claude"),
+        (GEMINI_ADAPTER, "gemini"),
+    ] {
+        assert!(adapter.contains("canonical"));
+        assert!(adapter.contains(host));
+        assert!(!adapter.contains("Manual analysis"));
+        assert!(!adapter.contains("## Job input"));
+    }
     assert!(CODEX_ADAPTER.contains("../../../skills/rolign/SKILL.md"));
-    assert!(!CODEX_ADAPTER.contains("Manual analysis"));
+    assert!(CLAUDE_ADAPTER.contains("../../../skills/rolign/SKILL.md"));
+    assert!(CLAUDE_ADAPTER.contains("$ARGUMENTS"));
+    assert!(GEMINI_ADAPTER.contains("skills/rolign/SKILL.md"));
+    assert!(GEMINI_ADAPTER.contains("{{args}}"));
+    assert!(CLAUDE_ADAPTER.contains("<rolign_args>"));
+    assert!(GEMINI_ADAPTER.contains("<rolign_args>"));
 }
 
 #[test]
@@ -74,6 +91,7 @@ fn analysis_contract_matches_rust_save_fields() {
         assert!(ANALYSIS_CONTRACT.contains(field));
     }
     assert!(!ANALYSIS_CONTRACT.contains("\"total\""));
+    assert!(ANALYSIS_CONTRACT.contains("`codex`, `claude`, or `gemini`"));
     assert!(COVER_RULES.contains("only facts supported by `resume.md`"));
 }
 
@@ -88,6 +106,7 @@ fn cover_only_contract_excludes_analysis() {
         assert!(COVER_ONLY_CONTRACT.contains(field));
     }
     assert!(COVER_ONLY_CONTRACT.contains("do not include categories, a score, or analysis"));
+    assert!(COVER_ONLY_CONTRACT.contains("`codex`, `claude`, or `gemini`"));
 }
 
 #[test]
