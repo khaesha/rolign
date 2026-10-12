@@ -31,9 +31,9 @@ The development boundary accepts one JSON request on standard input. It reads
 `history/`.
 
 ```bash
-rtk cargo run -- save --workspace . < tests/fixtures/analysis-request.json
-rtk cargo run -- list --workspace .
-rtk cargo run -- validate-url https://example.test/job/123
+cargo run -- save --workspace . < tests/fixtures/analysis-request.json
+cargo run -- list --workspace .
+cargo run -- validate-url https://example.test/job/123
 ```
 
 ## Use Rolign
@@ -49,9 +49,9 @@ normal local tool operations.
 
 All hosts also support `cover [URL]` and `tracker`. Tracker accepts a follow-up
 `open <record-id>` request. Gemini users should run `/commands reload` after
-pulling adapter changes or restart Gemini CLI. Each host validates URLs,
-retrieves a public page once when available, asks for confirmation, and falls
-back to pasted text without saving a premature record.
+pulling adapter changes or restart Gemini CLI. Each host validates URLs, uses
+its browser/web capability or one ordinary HTTP request, asks for confirmation,
+and falls back to pasted text without saving a premature record.
 
 Commands:
 
@@ -80,10 +80,10 @@ remaining authenticated-host release gate.
 ## Development
 
 ```bash
-rtk cargo fmt --check
-rtk cargo check
-rtk cargo clippy --all-targets --all-features -- -D warnings
-rtk cargo test
+cargo fmt --check
+cargo check
+cargo clippy --all-targets --all-features -- -D warnings
+cargo test
 ```
 
 `resume.md`, `history/`, and `.rolign-tmp/` are intentionally ignored because

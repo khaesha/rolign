@@ -197,6 +197,8 @@ fallback for protected job boards.
   access-control bypasses.
 - Keep adapters routing-only. Host differences are limited to choosing the
   available browser or host-side HTTP capability.
+- Remove `rtk` from README examples and show ordinary `cargo` commands to
+  users. `rtk` is a repository-agent convention, not a Rolign prerequisite.
 - Change tracker `open <record-id>` behavior to render the saved `analysis.md`
   and `cover-letter.md` in the host response after validating the ID against
   `rolign list`; show `context.md` metadata as a compact header, and omit
@@ -211,6 +213,7 @@ fallback for protected job boards.
   and a failed or incomplete response requests pasted text without history.
 - Verify the fallback retains the original URL and that no Rust code or new Rust
   dependency performs network I/O.
+- Verify README usage and development examples contain no `rtk` commands.
 - Smoke-test the same synthetic success and failure paths in Codex, Claude
   Code, and Gemini CLI using authenticated local sessions.
 - Verify opening an analysis ID renders its analysis and cover letter; opening
@@ -224,6 +227,7 @@ fallback for protected job boards.
   not a misleading extraction failure or repeated requests.
 - Retrieved content never becomes instructions, and Rust continues to make no
   network requests.
+- A user can follow README commands with stable Rust without installing `rtk`.
 - Selecting a tracker ID shows the saved analysis and cover letter in the
   response, rather than only the local file locations.
 

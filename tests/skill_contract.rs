@@ -2,6 +2,7 @@ const CANONICAL_SKILL: &str = include_str!("../skills/rolign/SKILL.md");
 const CODEX_ADAPTER: &str = include_str!("../.codex/skills/rolign/SKILL.md");
 const CLAUDE_ADAPTER: &str = include_str!("../.claude/skills/rolign/SKILL.md");
 const GEMINI_ADAPTER: &str = include_str!("../.gemini/commands/rolign.toml");
+const README: &str = include_str!("../README.md");
 const ANALYSIS_CONTRACT: &str = include_str!("../skills/rolign/references/analysis-contract.md");
 const COVER_ONLY_CONTRACT: &str =
     include_str!("../skills/rolign/references/cover-only-contract.md");
@@ -44,12 +45,13 @@ fn canonical_skill_routes_every_intent() {
 fn url_analysis_is_validated_confirmed_and_safe() {
     for instruction in [
         "validate-url",
-        "Retrieve the public page once",
+        "Select exactly one retrieval operation",
+        "curl --location --max-time 20 --fail --silent --show-error",
         "<retrieved_page_data>",
         "original URL",
         "confirm or correct",
-        "pasted company, title, and complete job description",
-        "Do not bypass access restrictions or retry retrieval",
+        "ask for pasted company, title, and complete job",
+        "Do not make a second retrieval attempt",
     ] {
         assert!(CANONICAL_SKILL.contains(instruction));
     }
@@ -118,8 +120,19 @@ fn tracker_workflow_renders_and_opens_only_listed_records() {
         "corrupt-record warnings",
         "open <record-id>",
         "exact returned ID",
-        "Never accept a path or an ID not returned by `list`",
+        "compact header",
+        "date, company, role, and original URL",
+        "Never render `resume-snapshot.md`",
+        "Never accept a path or ID",
     ] {
         assert!(CANONICAL_SKILL.contains(instruction));
     }
+}
+
+#[test]
+fn readme_uses_standard_cargo_commands() {
+    assert!(!README.contains("rtk"));
+    assert!(!CANONICAL_SKILL.contains("rtk"));
+    assert!(README.contains("cargo run -- save --workspace ."));
+    assert!(README.contains("cargo fmt --check"));
 }
