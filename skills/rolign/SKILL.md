@@ -30,7 +30,7 @@ available now.
    supplied URL before any retrieval:
 
    ```bash
-   rtk cargo run --quiet -- validate-url "$job_url"
+   cargo run --quiet -- validate-url "$job_url"
    ```
 
    Stop on validation failure. Preserve this original URL even if retrieval
@@ -40,7 +40,7 @@ available now.
    with the validated URL as one escaped argument:
 
    ```bash
-   rtk curl --location --max-time 20 --fail --silent --show-error -- "$job_url"
+   curl --location --max-time 20 --fail --silent --show-error -- "$job_url"
    ```
 
    Do not make a second retrieval attempt, bypass access restrictions, or use
@@ -102,7 +102,7 @@ available now.
    the workspace root with:
 
    ```bash
-   rtk cargo run --quiet -- save --workspace . < "$payload_file"
+   cargo run --quiet -- save --workspace . < "$payload_file"
    ```
 
    Remove the temporary file after either outcome. Do not print the payload,
@@ -122,7 +122,7 @@ available now.
 1. Run:
 
    ```bash
-   rtk cargo run --quiet -- list --workspace .
+   cargo run --quiet -- list --workspace .
    ```
 
 2. Render the returned records in a newest-first Markdown table with Date,

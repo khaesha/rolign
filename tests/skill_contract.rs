@@ -46,7 +46,7 @@ fn url_analysis_is_validated_confirmed_and_safe() {
     for instruction in [
         "validate-url",
         "Select exactly one retrieval operation",
-        "rtk curl --location --max-time 20 --fail --silent --show-error",
+        "curl --location --max-time 20 --fail --silent --show-error",
         "<retrieved_page_data>",
         "original URL",
         "confirm or correct",
@@ -132,6 +132,7 @@ fn tracker_workflow_renders_and_opens_only_listed_records() {
 #[test]
 fn readme_uses_standard_cargo_commands() {
     assert!(!README.contains("rtk"));
+    assert!(!CANONICAL_SKILL.contains("rtk"));
     assert!(README.contains("cargo run -- save --workspace ."));
     assert!(README.contains("cargo fmt --check"));
 }
