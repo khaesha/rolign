@@ -1,0 +1,33 @@
+{
+  "kind": "analysis",
+  "company": "Example Systems",
+  "job_title": "Platform Engineer",
+  "job_url": "https://example.test/jobs/platform",
+  "job_description": "Build reliable local developer tools using Rust.",
+  "ai_host": "codex",
+  "analysis": {
+    "categories": {
+      "required_qualifications": 32,
+      "skills_and_responsibilities": 24,
+      "relevant_achievements": 15,
+      "keywords_and_clarity": 7
+    },
+    "strengths": [
+      {
+        "finding": "Pengalaman Rust",
+        "evidence": "Resume mencantumkan Rust sebagai keterampilan teknis."
+      }
+    ],
+    "gaps": [
+      {
+        "finding": "Operasi platform",
+        "explanation": "Resume belum menunjukkan kepemilikan operasi produksi."
+      }
+    ],
+    "missing_keywords": ["observability"],
+    "recommendations": ["Jelaskan pekerjaan pengujian dengan konteks proyek yang konkret."]
+  },
+  "cover_letter": {
+    "body": "Yth. tim perekrutan,\n\nSaya tertarik pada peran Platform Engineer.\n\nHormat saya,\nExample Candidate"
+  }
+}
