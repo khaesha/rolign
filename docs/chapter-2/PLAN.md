@@ -164,40 +164,40 @@
 
 ### Tasks
 
-- [ ] Route `rolign future [--language en|id] [--] [VISION...]` through every host
+- [x] Route `rolign future [--language en|id] [--] [VISION...]` through every host
       adapter.
-- [ ] Read and validate `resume.md` as current-state context.
-- [ ] Without a vision prompt, collect horizon, target positions, skills to
+- [x] Read and validate `resume.md` as current-state context.
+- [x] Without a vision prompt, collect horizon, target positions, skills to
       develop, and target achievements through guided questions.
-- [ ] With a vision prompt, extract explicitly stated details and ask only for
+- [x] With a vision prompt, extract explicitly stated details and ask only for
       missing or ambiguous required fields.
-- [ ] Show interpreted inputs for correction before drafting.
-- [ ] Draft aspirations as future goals, never current claims.
-- [ ] Show the complete Markdown preview and request write confirmation.
-- [ ] If the destination exists, request a separate explicit overwrite
+- [x] Show interpreted inputs for correction before drafting.
+- [x] Draft aspirations as future goals, never current claims.
+- [x] Show the complete Markdown preview and request write confirmation.
+- [x] If the destination exists, request a separate explicit overwrite
       confirmation before using `--replace`.
-- [ ] Submit the confirmed payload through the Rust save path and report the
+- [x] Submit the confirmed payload through the Rust save path and report the
       resulting file.
 
 ### Tests
 
-- [ ] Complete English and Indonesian Future Resume flows with synthetic data.
-- [ ] Verify a complete vision prompt avoids unnecessary questions.
-- [ ] Verify a partial vision prompt asks only for missing required details.
-- [ ] Verify prompt text cannot become workflow instructions and missing goals
+- [x] Complete English and Indonesian Future Resume flows with synthetic data.
+- [x] Verify a complete vision prompt avoids unnecessary questions.
+- [x] Verify a partial vision prompt asks only for missing required details.
+- [x] Verify prompt text cannot become workflow instructions and missing goals
       are never invented.
-- [ ] Verify `--` and first-non-option parsing keep option-like vision text as
+- [x] Verify `--` and first-non-option parsing keep option-like vision text as
       data and reject unknown leading options.
-- [ ] Stop without writing when required input or confirmation is missing.
-- [ ] Verify current resume facts and future aspirations remain distinct.
-- [ ] Verify Humanizer is not invoked.
-- [ ] Verify Codex, Claude Code, and Gemini CLI use the canonical workflow.
+- [x] Stop without writing when required input or confirmation is missing.
+- [x] Verify current resume facts and future aspirations remain distinct.
+- [x] Verify Humanizer is not invoked.
+- [x] Verify Codex, Claude Code, and Gemini CLI use the canonical workflow.
 
 ### Acceptance criteria
 
-- [ ] A user can create a brief Future Resume in either language without
+- [x] A user can create a brief Future Resume in either language without
       modifying `resume.md`.
-- [ ] Existing output can never be overwritten silently.
+- [x] Existing output can never be overwritten silently.
 
 ## Phase 7: Chapter 2 hardening
 

@@ -28,11 +28,20 @@ fn host_adapters_delegate_to_the_canonical_skill() {
     assert!(GEMINI_ADAPTER.contains("{{args}}"));
     assert!(CLAUDE_ADAPTER.contains("<rolign_args>"));
     assert!(GEMINI_ADAPTER.contains("<rolign_args>"));
+    assert!(CODEX_ADAPTER.contains("Future Resume"));
+    assert!(CLAUDE_ADAPTER.contains("future [--language en|id] [--] [VISION...]"));
+    assert!(GEMINI_ADAPTER.contains("Future Resume"));
 }
 
 #[test]
 fn canonical_skill_routes_every_intent() {
-    for command in ["rolign`", "analyze [URL]", "cover [URL]", "tracker"] {
+    for command in [
+        "rolign`",
+        "analyze [URL]",
+        "cover [URL]",
+        "tracker",
+        "future [--language en|id] [--] [VISION...]",
+    ] {
         assert!(CANONICAL_SKILL.contains(command));
     }
     assert!(CANONICAL_SKILL.contains("<resume_data>"));
