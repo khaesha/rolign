@@ -27,13 +27,14 @@ Edit `resume.md` with your own Markdown resume. Rolign never changes it.
 ## Core commands
 
 The development boundary accepts one JSON request on standard input. It reads
-`resume.md` from the workspace and writes Markdown-only records under
-`history/`.
+`resume.md` for saved job records, writes Markdown history under `history/`,
+and can write a separate `future-resume.md`.
 
 ```bash
 cargo run -- save --workspace . < tests/fixtures/analysis-request.json
 cargo run -- list --workspace .
 cargo run -- validate-url https://example.test/job/123
+cargo run -- save-future --workspace . < tests/fixtures/future-request-en.json
 ```
 
 ## Use Rolign
@@ -68,7 +69,7 @@ and existing history records stay compatible.
 
 ## Privacy and limits
 
-- `resume.md`, `history/`, and `.rolign-tmp/` are ignored by Git. Do not commit
+- `resume.md`, `history/`, `future-resume.md`, and `.rolign-tmp/` are ignored by Git. Do not commit
   resumes, saved records, temporary payloads, or credentials.
 - The selected host receives the resume and job description needed for the
   requested workflow. Rust makes no model calls, web requests, telemetry, or
@@ -90,5 +91,5 @@ cargo clippy --all-targets --all-features -- -D warnings
 cargo test
 ```
 
-`resume.md`, `history/`, and `.rolign-tmp/` are intentionally ignored because
+`resume.md`, `history/`, `future-resume.md`, and `.rolign-tmp/` are intentionally ignored because
 they can contain personal data.
