@@ -45,13 +45,18 @@ fn canonical_skill_routes_every_intent() {
 fn url_analysis_is_validated_confirmed_and_safe() {
     for instruction in [
         "validate-url",
-        "Select exactly one retrieval operation",
-        "curl --location --max-time 20 --fail --silent --show-error",
+        "Make exactly one ordinary HTTP request",
+        "curl --location --max-time 20 --max-filesize 5242880 --fail --silent --show-error --output",
         "<retrieved_page_data>",
         "original URL",
         "confirm or correct",
         "ask for pasted company, title, and complete job",
         "Do not make a second retrieval attempt",
+        "Prefer a schema.org",
+        "`JobPosting` JSON-LD object",
+        "main` or `article",
+        "not print raw HTML",
+        "Delete the temporary HTML file",
     ] {
         assert!(CANONICAL_SKILL.contains(instruction));
     }

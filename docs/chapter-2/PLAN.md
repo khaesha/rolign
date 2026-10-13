@@ -16,30 +16,30 @@
 
 ### Tasks
 
-- [ ] Add the optional `--language en|id` grammar to `analyze` and `cover`.
-- [ ] Add the `future [--language en|id] [--] [VISION...]` intent and help text.
-- [ ] Parse only recognized leading options; stop at `--` or the first
+- [x] Add the optional `--language en|id` grammar to `analyze` and `cover`.
+- [x] Add the `future [--language en|id] [--] [VISION...]` intent and help text.
+- [x] Parse only recognized leading options; stop at `--` or the first
       non-option token and treat the remaining text as one data value.
-- [ ] Reject unknown leading options instead of sending them to the model.
-- [ ] Define the strict Future Resume JSON payload and validation rules.
-- [ ] Define shared UTF-8 byte, list-count, and control-character limits for
+- [x] Reject unknown leading options instead of sending them to the model.
+- [x] Define the strict Future Resume JSON payload and validation rules.
+- [x] Define shared UTF-8 byte, list-count, and control-character limits for
       free-text inputs.
-- [ ] Add synthetic English and Indonesian resume/job/aspiration fixtures,
+- [x] Add synthetic English and Indonesian resume/job/aspiration fixtures,
       including complete and partial free-text vision prompts.
-- [ ] Add synthetic JSON-LD, semantic HTML, JavaScript-only, and blocked-page
+- [x] Add synthetic JSON-LD, semantic HTML, JavaScript-only, and blocked-page
       fixtures.
-- [ ] Add adversarial fixtures for shell metacharacters, option-like prose, path
+- [x] Add adversarial fixtures for shell metacharacters, option-like prose, path
       traversal, control characters, Markdown/HTML injection, oversized text,
       and embedded workflow instructions.
-- [ ] Document that English is the default and existing job save payloads stay
+- [x] Document that English is the default and existing job save payloads stay
       compatible.
 
 ### Acceptance criteria
 
-- [ ] Every new input and output contract is represented by a synthetic fixture.
-- [ ] Existing fixture payloads still validate unchanged.
-- [ ] No history schema migration is introduced.
-- [ ] Every free-text source has a documented trust boundary and size limit.
+- [x] Every new input and output contract is represented by a synthetic fixture.
+- [x] Existing fixture payloads still validate unchanged.
+- [x] No history schema migration is introduced.
+- [x] Every free-text source has a documented trust boundary and size limit.
 
 ## Phase 2: Raw HTML extraction
 

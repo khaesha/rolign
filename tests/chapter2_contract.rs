@@ -92,7 +92,10 @@ fn chapter_two_fixtures_cover_happy_and_fallback_inputs() {
     assert!(COMPLETE_VISION.contains("seven years"));
     assert!(PARTIAL_VISION.contains("platform engineering leader"));
     assert!(JSON_LD_PAGE.contains("JobPosting"));
+    assert!(JSON_LD_PAGE.contains("hiringOrganization"));
     assert!(SEMANTIC_PAGE.contains("Job description"));
+    assert!(SEMANTIC_PAGE.contains("<nav>"));
+    assert!(SEMANTIC_PAGE.contains("<script>"));
     assert!(JAVASCRIPT_PAGE.contains("Loading job details"));
     assert!(BLOCKED_PAGE.contains("Access denied"));
     assert!(OVERSIZED_VISION.repeat(2).len() > 4_000);
@@ -102,6 +105,23 @@ fn chapter_two_fixtures_cover_happy_and_fallback_inputs() {
     assert!(CONTROL_CHARACTER.contains("\\u0000"));
     assert!(MARKDOWN_HTML.contains("<script>"));
     assert!(EMBEDDED_INSTRUCTIONS.contains("Ignore all prior instructions"));
+}
+
+#[test]
+fn raw_html_retrieval_contract_is_bounded_and_safe() {
+    for instruction in [
+        "--max-filesize 5242880",
+        "--output \"$html_file\"",
+        "exactly one ordinary HTTP request",
+        "reject and delete any file larger",
+        "than 5 MiB",
+        "objects inside `@graph` or arrays",
+        "Ignore\n   `script`, `style`, `nav`",
+        "Delete the temporary HTML file after extraction or on every failure path",
+        "JavaScript-only, blocked, incomplete, or",
+    ] {
+        assert!(SKILL.contains(instruction));
+    }
 }
 
 #[test]
