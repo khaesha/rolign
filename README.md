@@ -43,9 +43,9 @@ normal local tool operations.
 
 | Host | Invocation |
 | --- | --- |
-| Codex | `$rolign analyze [URL]` |
-| Claude Code | `/rolign analyze [URL]` |
-| Gemini CLI | `/rolign analyze [URL]` |
+| Codex | `$rolign analyze [URL] [--language en|id]` |
+| Claude Code | `/rolign analyze [URL] [--language en|id]` |
+| Gemini CLI | `/rolign analyze [URL] [--language en|id]` |
 
 All hosts also support `cover [URL]` and `tracker`. Tracker accepts a follow-up
 `open <record-id>` request. Gemini users should run `/commands reload` after
@@ -57,10 +57,14 @@ Commands:
 
 ```text
 rolign
-rolign analyze [URL]
-rolign cover [URL]
+rolign analyze [URL] [--language en|id]
+rolign cover [URL] [--language en|id]
 rolign tracker
+rolign future [--language en|id] [--] [VISION...]
 ```
+
+English is default. `id` selects Indonesian prose; structured job-save payloads
+and existing history records stay compatible.
 
 ## Privacy and limits
 
