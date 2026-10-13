@@ -203,23 +203,23 @@
 
 ### Tasks
 
-- [ ] Run the full automated verification suite on a fresh clone.
+- [x] Run the full automated verification suite on a fresh clone.
 - [ ] Smoke-test help, URL/manual analysis, cover-only, tracker, record opening,
       and Future Resume on all three authenticated hosts.
 - [ ] Verify English defaults and Indonesian selection on every generating
       command.
-- [ ] Audit temporary files, Git ignores, logs, fixtures, and saved artifacts
+- [x] Audit temporary files, Git ignores, logs, fixtures, and saved artifacts
       for sensitive content.
 - [ ] Run the full adversarial free-text suite against every host and Rust trust
       boundary.
-- [ ] Update README commands, privacy notes, limitations, and Humanizer
+- [x] Update README commands, privacy notes, limitations, and Humanizer
       attribution.
-- [ ] Record host versions and verification evidence.
+- [x] Record host versions and verification evidence.
 
 ### Acceptance criteria
 
 - [ ] Every Chapter 2 PRD success criterion has test or smoke-test evidence.
-- [ ] Existing Chapter 1 records remain readable.
-- [ ] A fresh user needs only stable Rust and one authenticated supported host.
-- [ ] No real resume, job posting, aspiration, credential, or raw HTML is
+- [x] Existing Chapter 1 records remain readable.
+- [x] A fresh user needs only stable Rust and one authenticated supported host.
+- [x] No real resume, job posting, aspiration, credential, or raw HTML is
       committed or logged.

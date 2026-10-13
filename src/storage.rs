@@ -701,6 +701,32 @@ mod tests {
     }
 
     #[test]
+    fn existing_schema_v1_record_remains_listable() {
+        let workspace = TestWorkspace::new();
+        let record = workspace
+            .0
+            .join("history")
+            .join("20261011T073021Z-example-systems-platform-engineer");
+        fs::create_dir_all(&record).unwrap();
+        fs::write(
+            record.join("context.md"),
+            include_str!("../tests/fixtures/history-v1-context.md"),
+        )
+        .unwrap();
+        for file in ["resume-snapshot.md", "analysis.md", "cover-letter.md"] {
+            fs::write(record.join(file), "# Synthetic fixture\n").unwrap();
+        }
+
+        let records = list(&workspace.0).unwrap().records;
+        assert_eq!(records.len(), 1);
+        assert_eq!(
+            records[0].id,
+            "20261011T073021Z-example-systems-platform-engineer"
+        );
+        assert_eq!(records[0].score, Some(78));
+    }
+
+    #[test]
     fn failed_history_write_creates_no_record() {
         let workspace = TestWorkspace::new();
         fs::write(workspace.0.join("history"), "not a directory").unwrap();

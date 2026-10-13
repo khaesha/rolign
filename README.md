@@ -54,6 +54,10 @@ pulling adapter changes or restart Gemini CLI. Each host validates URLs, uses
 its browser/web capability or one ordinary HTTP request, asks for confirmation,
 and falls back to pasted text without saving a premature record.
 
+`future [--language en|id] [--] [VISION...]` collects explicit career goals,
+shows a preview, and asks separately before replacing an existing
+`future-resume.md`. It does not rewrite `resume.md` or add a tracker record.
+
 Commands:
 
 ```text
@@ -76,8 +80,14 @@ and existing history records stay compatible.
   background network activity.
 - Public job-page retrieval is attempted once only. Login-gated, incomplete,
   or unavailable pages require pasted job text.
+- Future Resume aspirations are not current qualifications. Use only goals you
+  explicitly provide; the workflow does not infer missing aspirations.
+- Rolign bundles the MIT-licensed [Humanizer attribution](skills/rolign/vendor/humanizer/ATTRIBUTION.md)
+  for its cover-letter-only editing pass. Humanizer never processes analysis or
+  Future Resume content.
 - MVP scope excludes PDF/DOCX input, resume rewriting, job submission,
-  databases, cloud sync, and a standalone UI.
+  databases, cloud sync, a standalone UI, JavaScript page execution, and
+  bypassing login or anti-bot controls.
 
 See [MVP verification](docs/MVP-VERIFICATION.md) for release evidence and the
 remaining authenticated-host release gate.
