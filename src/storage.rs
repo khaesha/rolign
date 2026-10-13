@@ -2,6 +2,7 @@ use std::{
     fs::{self, File, OpenOptions},
     io::Write,
     path::{Path, PathBuf},
+    sync::atomic::{AtomicUsize, Ordering},
 };
 
 use serde::{Deserialize, Serialize};
@@ -10,17 +11,23 @@ use time::{OffsetDateTime, format_description::well_known::Rfc3339};
 use url::Url;
 
 use crate::{
-    model::{AiHost, Analysis, RecordDraft, RecordKind},
+    model::{AiHost, Analysis, FutureResumeDraft, Language, RecordDraft, RecordKind},
     score::CategoryScores,
 };
 
 const SCHEMA_VERSION: u8 = 1;
 const STAGING_PREFIX: &str = ".staging-";
+static NEXT_FUTURE_TEMP: AtomicUsize = AtomicUsize::new(0);
 
 #[derive(Debug, Serialize)]
 pub struct SaveResult {
     pub id: String,
     pub score: Option<u8>,
+}
+
+#[derive(Debug, Serialize)]
+pub struct SaveFutureResult {
+    pub path: String,
 }
 
 #[derive(Debug, Serialize)]
@@ -87,6 +94,75 @@ pub fn read_resume(workspace: &Path) -> Result<String, String> {
 
 pub fn save(workspace: &Path, draft: &RecordDraft) -> Result<SaveResult, String> {
     save_at(workspace, draft, OffsetDateTime::now_utc())
+}
+
+pub fn save_future(
+    workspace: &Path,
+    draft: &FutureResumeDraft,
+    replace: bool,
+) -> Result<SaveFutureResult, String> {
+    let workspace = workspace_root(workspace)?;
+    let destination = workspace.join("future-resume.md");
+    let exists = match fs::symlink_metadata(&destination) {
+        Ok(metadata) => {
+            if metadata.file_type().is_symlink() || !metadata.is_file() {
+                return Err("future-resume.md must be a regular file".to_owned());
+            }
+            let canonical = destination
+                .canonicalize()
+                .map_err(|error| format!("cannot inspect future-resume.md: {error}"))?;
+            ensure_within(&workspace, &canonical, "future-resume.md")?;
+            true
+        }
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => false,
+        Err(error) => return Err(format!("cannot inspect future-resume.md: {error}")),
+    };
+    if exists && !replace {
+        return Err(
+            "future-resume.md already exists; confirm replacement and use --replace".to_owned(),
+        );
+    }
+
+    let content = render_future_resume(draft);
+    let temporary = future_temp_path(&workspace)?;
+    let result: Result<(), String> = (|| {
+        write_new(&temporary, &content)?;
+        if exists {
+            fs::rename(&temporary, &destination)
+                .map_err(|error| format!("cannot replace future-resume.md: {error}"))?;
+        } else {
+            fs::hard_link(&temporary, &destination).map_err(|error| {
+                format!("cannot create future-resume.md without overwriting: {error}")
+            })?;
+            fs::remove_file(&temporary)
+                .map_err(|error| format!("cannot finalize future-resume.md: {error}"))?;
+        }
+        File::open(&workspace)
+            .and_then(|directory| directory.sync_all())
+            .map_err(|error| format!("cannot flush workspace directory: {error}"))?;
+        Ok(())
+    })();
+    if result.is_err() && temporary.exists() {
+        let _ = fs::remove_file(&temporary);
+    }
+    result?;
+    Ok(SaveFutureResult {
+        path: "future-resume.md".to_owned(),
+    })
+}
+
+fn future_temp_path(workspace: &Path) -> Result<PathBuf, String> {
+    for _ in 0..16 {
+        let path = workspace.join(format!(
+            ".future-resume-{}-{}.tmp",
+            std::process::id(),
+            NEXT_FUTURE_TEMP.fetch_add(1, Ordering::Relaxed)
+        ));
+        if !path.exists() {
+            return Ok(path);
+        }
+    }
+    Err("cannot allocate temporary future-resume file".to_owned())
 }
 
 fn save_at(
@@ -311,6 +387,60 @@ fn render_cover_letter(body: &str) -> String {
     format!("# Cover letter draft\n\n{body}\n")
 }
 
+fn render_future_resume(draft: &FutureResumeDraft) -> String {
+    let (title, horizon, vision, positions, skills, achievements, years) = match draft.language {
+        Language::En => (
+            "Future Resume",
+            "Horizon",
+            "Career vision",
+            "Target positions",
+            "Skills to develop",
+            "Target achievements",
+            "years",
+        ),
+        Language::Id => (
+            "Resume Masa Depan",
+            "Jangka waktu",
+            "Visi karier",
+            "Posisi target",
+            "Keterampilan untuk dikembangkan",
+            "Pencapaian target",
+            "tahun",
+        ),
+    };
+    format!(
+        "# {title}\n\n**{horizon}:** {} {years}\n\n## {vision}\n\n{}\n\n## {positions}\n\n{}\n\n## {skills}\n\n{}\n\n## {achievements}\n\n{}\n",
+        draft.horizon_years,
+        escape_future_markdown(&draft.career_vision),
+        render_future_list(&draft.target_positions),
+        render_future_list(&draft.skills_to_develop),
+        render_future_list(&draft.target_achievements),
+    )
+}
+
+fn render_future_list(values: &[String]) -> String {
+    values
+        .iter()
+        .map(|value| format!("- {}", escape_future_markdown(value)))
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+fn escape_future_markdown(value: &str) -> String {
+    let mut output = String::new();
+    for character in value.chars() {
+        match character {
+            '\n' | '\r' | '\t' => output.push(' '),
+            '\\' | '*' | '_' | '[' | ']' | '`' | '#' | '<' | '>' | '&' | '-' | '+' | '!' => {
+                output.push('\\');
+                output.push(character);
+            }
+            _ => output.push(character),
+        }
+    }
+    output
+}
+
 fn render_evidence_list(output: &mut String, values: &[crate::model::EvidenceMatch]) {
     if values.is_empty() {
         output.push_str("- None recorded.\n");
@@ -437,7 +567,9 @@ mod tests {
     };
 
     use super::*;
-    use crate::model::{SaveRequest, validate_request};
+    use crate::model::{
+        FutureResumeRequest, Language, SaveRequest, validate_future_request, validate_request,
+    };
 
     static NEXT_DIRECTORY: AtomicUsize = AtomicUsize::new(0);
 
@@ -453,6 +585,18 @@ mod tests {
             fs::create_dir_all(&directory).unwrap();
             fs::write(directory.join("resume.md"), "# Synthetic resume\n").unwrap();
             Self(directory)
+        }
+
+        fn future_draft(&self, language: Language) -> FutureResumeDraft {
+            validate_future_request(FutureResumeRequest {
+                language,
+                horizon_years: 7,
+                career_vision: "Lead reliable platform teams.".to_owned(),
+                target_positions: vec!["Platform Engineering Manager".to_owned()],
+                skills_to_develop: vec!["Organizational leadership".to_owned()],
+                target_achievements: vec!["Build a multi-team platform function".to_owned()],
+            })
+            .unwrap()
         }
 
         fn draft(&self) -> RecordDraft {
@@ -572,5 +716,59 @@ mod tests {
     #[test]
     fn markdown_escapes_dynamic_text() {
         assert_eq!(escape_markdown("# [Rust]*"), "\\# \\[Rust\\]\\*");
+    }
+
+    #[test]
+    fn saves_localized_future_resume_without_history_or_resume_changes() {
+        let workspace = TestWorkspace::new();
+        let resume = fs::read_to_string(workspace.0.join("resume.md")).unwrap();
+        let result =
+            save_future(&workspace.0, &workspace.future_draft(Language::En), false).unwrap();
+        assert_eq!(result.path, "future-resume.md");
+        let rendered = fs::read_to_string(workspace.0.join("future-resume.md")).unwrap();
+        assert!(rendered.contains("# Future Resume"));
+        assert!(rendered.contains("**Horizon:** 7 years"));
+        assert!(!workspace.0.join("history").exists());
+        assert_eq!(
+            fs::read_to_string(workspace.0.join("resume.md")).unwrap(),
+            resume
+        );
+
+        let indonesian = render_future_resume(&workspace.future_draft(Language::Id));
+        assert!(indonesian.contains("# Resume Masa Depan"));
+        assert!(indonesian.contains("**Jangka waktu:** 7 tahun"));
+    }
+
+    #[test]
+    fn future_resume_requires_explicit_replacement_and_preserves_old_content() {
+        let workspace = TestWorkspace::new();
+        let draft = workspace.future_draft(Language::En);
+        save_future(&workspace.0, &draft, false).unwrap();
+        let path = workspace.0.join("future-resume.md");
+        let original = fs::read_to_string(&path).unwrap();
+        assert!(save_future(&workspace.0, &workspace.future_draft(Language::Id), false).is_err());
+        assert_eq!(fs::read_to_string(&path).unwrap(), original);
+        save_future(&workspace.0, &workspace.future_draft(Language::Id), true).unwrap();
+        assert!(
+            fs::read_to_string(&path)
+                .unwrap()
+                .contains("# Resume Masa Depan")
+        );
+    }
+
+    #[test]
+    fn future_renderer_neutralizes_markdown_and_html() {
+        let draft = validate_future_request(FutureResumeRequest {
+            language: Language::En,
+            horizon_years: 7,
+            career_vision: "<script>\n# injected".to_owned(),
+            target_positions: vec!["- [role](https://attacker.example)".to_owned()],
+            skills_to_develop: vec!["Rust".to_owned()],
+            target_achievements: vec!["Build systems".to_owned()],
+        })
+        .unwrap();
+        let rendered = render_future_resume(&draft);
+        assert!(rendered.contains("\\<script\\> \\# injected"));
+        assert!(rendered.contains("\\- \\[role\\](https://attacker.example)"));
     }
 }

@@ -8,6 +8,7 @@ use serde::Serialize;
 
 enum Command {
     Save(PathBuf),
+    SaveFuture { workspace: PathBuf, replace: bool },
     List(PathBuf),
     ValidateUrl(String),
 }
@@ -28,6 +29,12 @@ fn run() -> Result<(), String> {
             let resume = storage::read_resume(&root)?;
             let draft = model::validate_request(request, resume)?;
             write_json(&storage::save(&root, &draft)?)
+        }
+        Command::SaveFuture { workspace, replace } => {
+            let request = serde_json::from_reader(io::stdin())
+                .map_err(|error| format!("invalid JSON input: {error}"))?;
+            let draft = model::validate_future_request(request)?;
+            write_json(&storage::save_future(&workspace, &draft, replace)?)
         }
         Command::List(workspace) => write_json(&storage::list(&workspace)?),
         Command::ValidateUrl(url) => write_json(&ValidatedUrl {
@@ -52,6 +59,23 @@ fn parse_args() -> Result<Command, String> {
             Err(usage())
         };
     }
+    if command == "save-future" {
+        let mut workspace = env::current_dir()
+            .map_err(|error| format!("cannot read current directory: {error}"))?;
+        let mut replace = false;
+        let mut workspace_set = false;
+        while let Some(flag) = args.next() {
+            match flag.as_str() {
+                "--replace" if !replace => replace = true,
+                "--workspace" if !workspace_set => {
+                    workspace = args.next().map(PathBuf::from).ok_or_else(usage)?;
+                    workspace_set = true;
+                }
+                _ => return Err(usage()),
+            }
+        }
+        return Ok(Command::SaveFuture { workspace, replace });
+    }
     if command != "save" && command != "list" {
         return Err(usage());
     }
@@ -75,7 +99,7 @@ fn parse_args() -> Result<Command, String> {
 }
 
 fn usage() -> String {
-    "usage: rolign <save|list> [--workspace PATH] | rolign validate-url <URL>".to_owned()
+    "usage: rolign <save|list> [--workspace PATH] | rolign save-future [--replace] [--workspace PATH] | rolign validate-url <URL>".to_owned()
 }
 
 fn write_json(value: &impl Serialize) -> Result<(), String> {

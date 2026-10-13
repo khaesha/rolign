@@ -100,65 +100,65 @@
 
 ### Tasks
 
-- [ ] Vendor a pinned copy of `blader/humanizer` with its MIT license,
+- [x] Vendor a pinned copy of `blader/humanizer` with its MIT license,
       attribution, upstream URL, and revision.
-- [ ] Make the canonical workflow read the bundled Humanizer instructions.
-- [ ] Run Humanizer only after the grounded cover-letter draft.
-- [ ] Provide the selected language and protected facts to the editing pass.
-- [ ] Delimit draft text as data and forbid Humanizer-triggered tools or file
+- [x] Make the canonical workflow read the bundled Humanizer instructions.
+- [x] Run Humanizer only after the grounded cover-letter draft.
+- [x] Provide the selected language and protected facts to the editing pass.
+- [x] Delimit draft text as data and forbid Humanizer-triggered tools or file
       access.
-- [ ] Compare protected facts before and after; stop without saving on changes
+- [x] Compare protected facts before and after; stop without saving on changes
       or unsupported additions.
-- [ ] Keep analysis and Future Resume outside the Humanizer pass.
+- [x] Keep analysis and Future Resume outside the Humanizer pass.
 
 ### Tests
 
-- [ ] Verify users need no global Humanizer installation.
-- [ ] Verify English and Indonesian cover letters retain language and facts.
-- [ ] Reject an edited draft that changes a name, role, date, metric, skill, or
+- [x] Verify users need no global Humanizer installation.
+- [x] Verify English and Indonesian cover letters retain language and facts.
+- [x] Reject an edited draft that changes a name, role, date, metric, skill, or
       achievement.
-- [ ] Verify analysis and Future Resume bypass Humanizer.
+- [x] Verify analysis and Future Resume bypass Humanizer.
 
 ### Acceptance criteria
 
-- [ ] Every saved cover letter has passed Humanizer and protected-fact checks.
-- [ ] Humanizer failure creates no history record.
+- [x] Every saved cover letter has passed Humanizer and protected-fact checks.
+- [x] Humanizer failure creates no history record.
 
 ## Phase 5: Future Resume domain and storage
 
 ### Tasks
 
-- [ ] Add typed language and Future Resume request models.
-- [ ] Validate a 5–10-year integer horizon, non-empty vision, and non-empty
+- [x] Add typed language and Future Resume request models.
+- [x] Validate a 5–10-year integer horizon, non-empty vision, and non-empty
       target-position, skill, and achievement lists.
-- [ ] Enforce 2,000-byte career vision, 500-byte list item, 20-item list, and
+- [x] Enforce 2,000-byte career vision, 500-byte list item, 20-item list, and
       control-character limits in Rust.
-- [ ] Add `save-future [--replace] [--workspace PATH]` to the Rust CLI.
-- [ ] Render localized Markdown headings and goal-oriented content.
-- [ ] Escape Future Resume text so it cannot add raw HTML or alter required
+- [x] Add `save-future [--replace] [--workspace PATH]` to the Rust CLI.
+- [x] Render localized Markdown headings and goal-oriented content.
+- [x] Escape Future Resume text so it cannot add raw HTML or alter required
       Markdown structure.
-- [ ] Write `<workspace>/future-resume.md` through a sibling temporary file.
-- [ ] Refuse an existing destination unless `--replace` is present.
-- [ ] Preserve the previous complete file if validation or replacement fails.
-- [ ] Keep Future Resume outside `history/` and tracker output.
+- [x] Write `<workspace>/future-resume.md` through a sibling temporary file.
+- [x] Refuse an existing destination unless `--replace` is present.
+- [x] Preserve the previous complete file if validation or replacement fails.
+- [x] Keep Future Resume outside `history/` and tracker output.
 
 ### Tests
 
-- [ ] Validate both languages and horizon boundaries 5 and 10.
-- [ ] Reject horizons below 5 or above 10 and every empty required field.
-- [ ] Render complete English and Indonesian Markdown fixtures.
-- [ ] Create a new file without `--replace`.
-- [ ] Reject an existing file without changing it.
-- [ ] Replace only when explicitly requested and preserve the old file on
+- [x] Validate both languages and horizon boundaries 5 and 10.
+- [x] Reject horizons below 5 or above 10 and every empty required field.
+- [x] Render complete English and Indonesian Markdown fixtures.
+- [x] Create a new file without `--replace`.
+- [x] Reject an existing file without changing it.
+- [x] Replace only when explicitly requested and preserve the old file on
       simulated failure.
-- [ ] Verify paths remain within the workspace and `resume.md` never changes.
-- [ ] Reject control characters, over-limit values, Markdown/HTML injection,
+- [x] Verify paths remain within the workspace and `resume.md` never changes.
+- [x] Reject control characters, over-limit values, Markdown/HTML injection,
       and path-like or command-like text without executing it.
 
 ### Acceptance criteria
 
-- [ ] Rust can safely create and explicitly replace one `future-resume.md`.
-- [ ] No partial document, history record, or resume modification occurs.
+- [x] Rust can safely create and explicitly replace one `future-resume.md`.
+- [x] No partial document, history record, or resume modification occurs.
 
 ## Phase 6: Future Resume host workflow
 

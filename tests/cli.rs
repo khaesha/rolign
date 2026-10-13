@@ -137,3 +137,64 @@ fn malformed_input_creates_no_history() {
 
     fs::remove_dir_all(workspace).unwrap();
 }
+
+#[test]
+fn saves_and_explicitly_replaces_future_resume_without_history() {
+    let workspace = env::temp_dir().join(format!(
+        "rolign-cli-future-test-{}-{}",
+        std::process::id(),
+        NEXT_DIRECTORY.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir_all(&workspace).unwrap();
+    let resume = "# Synthetic resume\n";
+    fs::write(workspace.join("resume.md"), resume).unwrap();
+
+    let run = |replace: bool, fixture: &[u8]| {
+        let mut command = Command::new(env!("CARGO_BIN_EXE_rolign"));
+        command.args(["save-future", "--workspace", workspace.to_str().unwrap()]);
+        if replace {
+            command.arg("--replace");
+        }
+        let mut child = command
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .spawn()
+            .unwrap();
+        child.stdin.take().unwrap().write_all(fixture).unwrap();
+        child.wait_with_output().unwrap()
+    };
+
+    let saved = run(false, include_bytes!("fixtures/future-request-en.json"));
+    assert!(saved.status.success());
+    assert_eq!(
+        serde_json::from_slice::<serde_json::Value>(&saved.stdout).unwrap()["path"],
+        "future-resume.md"
+    );
+    let path = workspace.join("future-resume.md");
+    let original = fs::read_to_string(&path).unwrap();
+    assert!(!run(false, br#"{\"language\":\"en\"}"#).status.success());
+    assert_eq!(fs::read_to_string(&path).unwrap(), original);
+    assert!(
+        !run(false, include_bytes!("fixtures/future-request-id.json"))
+            .status
+            .success()
+    );
+    assert_eq!(fs::read_to_string(&path).unwrap(), original);
+    assert!(
+        run(true, include_bytes!("fixtures/future-request-id.json"))
+            .status
+            .success()
+    );
+    assert!(
+        fs::read_to_string(&path)
+            .unwrap()
+            .contains("# Resume Masa Depan")
+    );
+    assert_eq!(
+        fs::read_to_string(workspace.join("resume.md")).unwrap(),
+        resume
+    );
+    assert!(!workspace.join("history").exists());
+
+    fs::remove_dir_all(workspace).unwrap();
+}
