@@ -1,6 +1,6 @@
 ---
 name: rolign
-description: Run Rolign's local resume-to-job analysis workflow when the user invokes $rolign or asks to analyze a resume against a job.
+description: Run Rolign's local resume, job-analysis, and Future Resume workflow when the user invokes $rolign.
 ---
 
 This is Codex: use `codex` as the active host value. Read

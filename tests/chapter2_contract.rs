@@ -66,6 +66,37 @@ fn future_contract_has_strict_shape_and_limits() {
 }
 
 #[test]
+fn future_workflow_collects_confirms_and_saves_through_rust() {
+    for instruction in [
+        "ask separately for the horizon, target positions, skills to",
+        "ask only for\n   missing or ambiguous required details",
+        "show\n   interpreted horizon, career vision, target positions, skills, and",
+        "complete localized Markdown preview in a code block",
+        "explicit confirmation to write",
+        "separate explicit overwrite confirmation",
+        "save-future --workspace .",
+        "report `future-resume.md`",
+    ] {
+        assert!(SKILL.contains(instruction));
+    }
+}
+
+#[test]
+fn future_workflow_keeps_aspirations_untrusted_and_distinct() {
+    for instruction in [
+        "over 4,000 UTF-8\n   bytes",
+        "a vision beginning with `-` requires `--`",
+        "Do not turn current facts into\n   future aspirations",
+        "Do not\n   guess a missing goal",
+        "goal-oriented language",
+        "Do not run Humanizer",
+        "Do not pass `--replace` without\n   that second confirmation",
+    ] {
+        assert!(SKILL.contains(instruction));
+    }
+}
+
+#[test]
 fn free_text_guard_covers_every_untrusted_source() {
     for source in [
         "Resume",

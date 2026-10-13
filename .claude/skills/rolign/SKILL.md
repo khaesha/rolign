@@ -1,7 +1,7 @@
 ---
 name: rolign
-description: Run Rolign's local resume-to-job analysis workflow when the user invokes /rolign or asks to analyze a resume against a job.
-argument-hint: "[analyze [URL] | cover [URL] | tracker]"
+description: Run Rolign's local resume, job-analysis, and Future Resume workflow when the user invokes /rolign.
+argument-hint: "[analyze [URL] | cover [URL] | tracker | future [--language en|id] [--] [VISION...]]"
 ---
 
 This is Claude Code: use `claude` as the active host value. Read

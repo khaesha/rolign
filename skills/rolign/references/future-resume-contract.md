@@ -1,6 +1,6 @@
 # Future Resume save contract
 
-Future Resume storage will accept one JSON object on standard input. The vision
+Future Resume storage accepts one JSON object on standard input. The vision
 prompt is host-only context and is not part of this payload.
 
 ```json

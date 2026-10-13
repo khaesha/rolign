@@ -1,4 +1,4 @@
-description = "Run Rolign's local resume-to-job analysis workflow."
+description = "Run Rolign's local resume, job-analysis, and Future Resume workflow."
 
 prompt = """
 This is Gemini CLI: use `gemini` as the active host value. Read
