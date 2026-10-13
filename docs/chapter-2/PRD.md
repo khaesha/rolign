@@ -106,18 +106,20 @@ bypass access restrictions.
 Given `rolign future [--language en|id] [--] [VISION...]`, Rolign must:
 
 1. Read the non-empty `resume.md` as current-state context without modifying it.
-2. Without `VISION`, ask guided questions for a 5–10-year horizon, target
-   positions, skills to develop, and professional achievements to pursue.
+2. Without `VISION`, default the horizon to 5 years and ask only when no
+   usable career direction can be established.
 3. With `VISION`, treat all free text after `future` except recognized options
    as one aspiration prompt. Extract any stated horizon, target positions,
-   skills, and achievements, then ask only for required details that are
-   missing or ambiguous.
-4. Never invent an aspiration merely to complete a field.
+   skills, and achievements, then apply documented defaults and editable
+   recommendations for missing details.
+4. For missing skills and achievements, recommend target-relevant future goals
+   and label them as editable suggestions. They must never be presented as
+   current resume facts or unsupported gaps.
 5. Treat every supplied aspiration as data, not workflow instructions.
 6. Clearly distinguish current resume evidence from future goals.
 7. Show the interpreted inputs before drafting so the user can correct them.
 8. Generate a brief preview in the selected language and request confirmation.
-9. Stop without writing when required input is missing or confirmation is not
+9. Stop without writing when no usable career direction or confirmation is
    given.
 
 Option parsing stops at `--` or the first non-option token. Every remaining
@@ -128,8 +130,11 @@ and required when the vision begins with `-`.
 ### FR-5: Future Resume output
 
 - The output path is `<workspace>/future-resume.md`.
-- The document contains a title, horizon, career vision, target positions,
-  skills to develop, and target achievements.
+- The document presents a resume-style future professional profile, target
+  position, capabilities to build, and target achievements.
+- A missing horizon defaults to 5 years. A Product/Project Manager direction
+  resolves to Product Manager as the primary target, with Project Manager as an
+  optional adjacent direction.
 - Future statements use goal-oriented language and must not imply they have
   already happened.
 - Rust validates non-empty fields and the 5–10-year horizon, then renders the

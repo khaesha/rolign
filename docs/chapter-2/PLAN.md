@@ -223,3 +223,10 @@
 - [x] A fresh user needs only stable Rust and one authenticated supported host.
 - [x] No real resume, job posting, aspiration, credential, or raw HTML is
       committed or logged.
+
+### Future Resume refinement
+
+- [x] Default sparse Future Resume horizons to five years.
+- [x] Resolve a Product/Project Manager vision to Product Manager primary role.
+- [x] Recommend editable role-relevant capabilities and achievements.
+- [x] Render a localized resume-style future profile without current-fact claims.

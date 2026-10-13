@@ -388,31 +388,58 @@ fn render_cover_letter(body: &str) -> String {
 }
 
 fn render_future_resume(draft: &FutureResumeDraft) -> String {
-    let (title, horizon, vision, positions, skills, achievements, years) = match draft.language {
+    let (
+        title,
+        horizon,
+        profile,
+        position,
+        primary_target,
+        adjacent_directions,
+        capabilities,
+        achievements,
+        future_goal_note,
+        years,
+    ) = match draft.language {
         Language::En => (
             "Future Resume",
-            "Horizon",
-            "Career vision",
-            "Target positions",
-            "Skills to develop",
+            "Target horizon",
+            "Future professional profile",
+            "Target position",
+            "Primary target",
+            "Adjacent directions",
+            "Capabilities to build",
             "Target achievements",
+            "This profile describes future goals to pursue, not current qualifications.",
             "years",
         ),
         Language::Id => (
             "Resume Masa Depan",
-            "Jangka waktu",
-            "Visi karier",
+            "Jangka waktu target",
+            "Profil profesional masa depan",
             "Posisi target",
-            "Keterampilan untuk dikembangkan",
+            "Target utama",
+            "Arah terkait",
+            "Kapabilitas untuk dikembangkan",
             "Pencapaian target",
+            "Profil ini menjelaskan tujuan masa depan untuk dikejar, bukan kualifikasi saat ini.",
             "tahun",
         ),
     };
+    let primary = &draft.target_positions[0];
+    let adjacent = &draft.target_positions[1..];
+    let adjacent = if adjacent.is_empty() {
+        String::new()
+    } else {
+        format!(
+            "\n\n**{adjacent_directions}:**\n\n{}",
+            render_future_list(adjacent)
+        )
+    };
     format!(
-        "# {title}\n\n**{horizon}:** {} {years}\n\n## {vision}\n\n{}\n\n## {positions}\n\n{}\n\n## {skills}\n\n{}\n\n## {achievements}\n\n{}\n",
+        "# {title}\n\n**{horizon}:** {} {years}\n\n## {profile}\n\n{}\n\n{future_goal_note}\n\n## {position}\n\n**{primary_target}:** {}{adjacent}\n\n## {capabilities}\n\n{}\n\n## {achievements}\n\n{}\n",
         draft.horizon_years,
         escape_future_markdown(&draft.career_vision),
-        render_future_list(&draft.target_positions),
+        escape_future_markdown(primary),
         render_future_list(&draft.skills_to_develop),
         render_future_list(&draft.target_achievements),
     )
@@ -753,7 +780,9 @@ mod tests {
         assert_eq!(result.path, "future-resume.md");
         let rendered = fs::read_to_string(workspace.0.join("future-resume.md")).unwrap();
         assert!(rendered.contains("# Future Resume"));
-        assert!(rendered.contains("**Horizon:** 7 years"));
+        assert!(rendered.contains("**Target horizon:** 7 years"));
+        assert!(rendered.contains("## Future professional profile"));
+        assert!(rendered.contains("not current qualifications"));
         assert!(!workspace.0.join("history").exists());
         assert_eq!(
             fs::read_to_string(workspace.0.join("resume.md")).unwrap(),
@@ -762,7 +791,25 @@ mod tests {
 
         let indonesian = render_future_resume(&workspace.future_draft(Language::Id));
         assert!(indonesian.contains("# Resume Masa Depan"));
-        assert!(indonesian.contains("**Jangka waktu:** 7 tahun"));
+        assert!(indonesian.contains("**Jangka waktu target:** 7 tahun"));
+        assert!(indonesian.contains("## Profil profesional masa depan"));
+    }
+
+    #[test]
+    fn future_profile_distinguishes_primary_and_adjacent_targets() {
+        let draft = validate_future_request(FutureResumeRequest {
+            language: Language::En,
+            horizon_years: 5,
+            career_vision: "Transition into product leadership.".to_owned(),
+            target_positions: vec!["Product Manager".to_owned(), "Project Manager".to_owned()],
+            skills_to_develop: vec!["Product discovery".to_owned()],
+            target_achievements: vec!["Lead a product launch".to_owned()],
+        })
+        .unwrap();
+
+        let rendered = render_future_resume(&draft);
+        assert!(rendered.contains("**Primary target:** Product Manager"));
+        assert!(rendered.contains("**Adjacent directions:**\n\n- Project Manager"));
     }
 
     #[test]
