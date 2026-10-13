@@ -75,26 +75,26 @@
 
 ### Tasks
 
-- [ ] Parse one optional language flag in the canonical workflow.
-- [ ] Default omitted language to `en`; reject unsupported or duplicate values.
-- [ ] Generate analysis and cover-letter prose in the selected language.
-- [ ] Keep scoring, structured field names, names, evidence, metrics, and quoted
+- [x] Parse one optional language flag in the canonical workflow.
+- [x] Default omitted language to `en`; reject unsupported or duplicate values.
+- [x] Generate analysis and cover-letter prose in the selected language.
+- [x] Keep scoring, structured field names, names, evidence, metrics, and quoted
       keywords unchanged.
-- [ ] Apply the same language behavior to manual, URL, and cover-only flows.
+- [x] Apply the same language behavior to manual, URL, and cover-only flows.
 
 ### Tests
 
-- [ ] Verify omitted language produces English analysis and cover letters.
-- [ ] Verify `--language id` produces Indonesian analysis and cover letters.
-- [ ] Verify both languages yield identical category scores for one fixture.
-- [ ] Verify translation adds no resume claim or job requirement.
-- [ ] Verify invalid language stops before saving.
+- [x] Verify omitted language produces English analysis and cover letters.
+- [x] Verify `--language id` produces Indonesian analysis and cover letters.
+- [x] Verify both languages yield identical category scores for one fixture.
+- [x] Verify translation adds no resume claim or job requirement.
+- [x] Verify invalid language stops before saving.
 
 ### Acceptance criteria
 
-- [ ] English and Indonesian workflows produce records accepted by the existing
+- [x] English and Indonesian workflows produce records accepted by the existing
       Rust save path.
-- [ ] Existing commands without language flags retain English behavior.
+- [x] Existing commands without language flags retain English behavior.
 
 ## Phase 4: Humanized cover letters
 
