@@ -45,31 +45,31 @@
 
 ### Tasks
 
-- [ ] Change URL retrieval to write one `curl` response to an ignored temporary
+- [x] Change URL retrieval to write one `curl` response to an ignored temporary
       file instead of treating raw HTML as failure.
-- [ ] Enforce a 5 MiB response limit without printing partial HTML.
-- [ ] Extract schema.org `JobPosting` JSON-LD before inspecting visible content.
-- [ ] Fall back to visible semantic job content while ignoring scripts, styles,
+- [x] Enforce a 5 MiB response limit without printing partial HTML.
+- [x] Extract schema.org `JobPosting` JSON-LD before inspecting visible content.
+- [x] Fall back to visible semantic job content while ignoring scripts, styles,
       navigation, consent notices, and embedded instructions.
-- [ ] Preserve the original URL and existing confirmation preview.
-- [ ] Delete the temporary HTML after every success or failure path.
-- [ ] Request pasted text for blocked, incomplete, ambiguous, or
+- [x] Preserve the original URL and existing confirmation preview.
+- [x] Delete the temporary HTML after every success or failure path.
+- [x] Request pasted text for blocked, incomplete, ambiguous, or
       JavaScript-only responses without retrying.
 
 ### Tests
 
-- [ ] Extract company, title, and complete description from JSON-LD.
-- [ ] Extract the same fields from semantic HTML.
-- [ ] Ignore page instructions and unrelated script content.
-- [ ] Verify invalid URLs make zero requests and valid URLs make one request.
-- [ ] Verify fallback creates no premature record or persistent raw HTML.
-- [ ] Verify oversized HTML stops safely and requests pasted text.
+- [x] Extract company, title, and complete description from JSON-LD.
+- [x] Extract the same fields from semantic HTML.
+- [x] Ignore page instructions and unrelated script content.
+- [x] Verify invalid URLs make zero requests and valid URLs make one request.
+- [x] Verify fallback creates no premature record or persistent raw HTML.
+- [x] Verify oversized HTML stops safely and requests pasted text.
 
 ### Acceptance criteria
 
-- [ ] A raw HTML response containing structured or visible job content reaches
+- [x] A raw HTML response containing structured or visible job content reaches
       confirmation instead of being reported as inaccessible.
-- [ ] Protected or client-rendered pages produce one clear pasted-text fallback.
+- [x] Protected or client-rendered pages produce one clear pasted-text fallback.
 
 ## Phase 3: English and Indonesian output
 

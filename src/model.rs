@@ -171,10 +171,22 @@ mod tests {
 
     #[test]
     fn fixture_request_validates() {
+        for fixture in [
+            include_str!("../tests/fixtures/analysis-request.json"),
+            include_str!("../tests/fixtures/analysis-request-id.json"),
+        ] {
+            let request = serde_json::from_str(fixture).unwrap();
+            let draft = validate_request(request, "# Resume".to_owned()).unwrap();
+            assert_eq!(draft.analysis.unwrap().total, 78);
+        }
+    }
+
+    #[test]
+    fn indonesian_cover_fixture_validates() {
         let request =
-            serde_json::from_str(include_str!("../tests/fixtures/analysis-request.json")).unwrap();
+            serde_json::from_str(include_str!("../tests/fixtures/cover-request-id.json")).unwrap();
         let draft = validate_request(request, "# Resume".to_owned()).unwrap();
-        assert_eq!(draft.analysis.unwrap().total, 78);
+        assert!(draft.analysis.is_none());
     }
 
     #[test]

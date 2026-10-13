@@ -1,8 +1,11 @@
 const SKILL: &str = include_str!("../skills/rolign/SKILL.md");
 const FUTURE_CONTRACT: &str = include_str!("../skills/rolign/references/future-resume-contract.md");
 const GUARD: &str = include_str!("../skills/rolign/references/free-text-guard.md");
+const LANGUAGE_RULES: &str = include_str!("../skills/rolign/references/output-language-rules.md");
 const ANALYSIS_REQUEST: &str = include_str!("fixtures/analysis-request.json");
+const ANALYSIS_REQUEST_ID: &str = include_str!("fixtures/analysis-request-id.json");
 const COVER_REQUEST: &str = include_str!("fixtures/cover-request.json");
+const COVER_REQUEST_ID: &str = include_str!("fixtures/cover-request-id.json");
 const COMPLETE_VISION: &str = include_str!("fixtures/chapter-2/future-vision-complete.txt");
 const PARTIAL_VISION: &str = include_str!("fixtures/chapter-2/future-vision-partial.txt");
 const RESUME_EN: &str = include_str!("fixtures/chapter-2/resume-en.md");
@@ -125,8 +128,72 @@ fn raw_html_retrieval_contract_is_bounded_and_safe() {
 }
 
 #[test]
-fn existing_job_save_payloads_remain_unchanged_and_valid_json() {
-    for request in [ANALYSIS_REQUEST, COVER_REQUEST] {
+fn language_contract_defaults_and_preserves_facts() {
+    for instruction in [
+        "optional URL followed by at most one",
+        "omitting it selects `en`",
+        "unsupported, missing-value, or duplicate",
+        "Generate analysis and cover-letter prose in the selected language",
+        "Generate the cover letter in the\n   selected language",
+    ] {
+        assert!(SKILL.contains(instruction));
+    }
+    for rule in [
+        "No language option\nmeans `en`",
+        "missing, unsupported, or duplicate",
+        "Do not translate or alter JSON",
+        "Translation must not add, remove, or broaden",
+    ] {
+        assert!(LANGUAGE_RULES.contains(rule));
+    }
+}
+
+#[test]
+fn english_and_indonesian_payloads_keep_structured_facts_and_scores() {
+    let english_analysis: serde_json::Value = serde_json::from_str(ANALYSIS_REQUEST).unwrap();
+    let indonesian_analysis: serde_json::Value = serde_json::from_str(ANALYSIS_REQUEST_ID).unwrap();
+    for field in [
+        "company",
+        "job_title",
+        "job_url",
+        "job_description",
+        "ai_host",
+    ] {
+        assert_eq!(english_analysis[field], indonesian_analysis[field]);
+    }
+    assert_eq!(
+        english_analysis["analysis"]["categories"],
+        indonesian_analysis["analysis"]["categories"]
+    );
+    assert!(
+        indonesian_analysis["cover_letter"]["body"]
+            .as_str()
+            .unwrap()
+            .contains("Platform Engineer")
+    );
+
+    let english_cover: serde_json::Value = serde_json::from_str(COVER_REQUEST).unwrap();
+    let indonesian_cover: serde_json::Value = serde_json::from_str(COVER_REQUEST_ID).unwrap();
+    for field in [
+        "company",
+        "job_title",
+        "job_url",
+        "job_description",
+        "ai_host",
+        "analysis",
+    ] {
+        assert_eq!(english_cover[field], indonesian_cover[field]);
+    }
+}
+
+#[test]
+fn job_save_payloads_remain_valid_json_without_a_language_field() {
+    for request in [
+        ANALYSIS_REQUEST,
+        ANALYSIS_REQUEST_ID,
+        COVER_REQUEST,
+        COVER_REQUEST_ID,
+    ] {
         assert!(serde_json::from_str::<serde_json::Value>(request).is_ok());
         assert!(!request.contains("\"language\""));
     }

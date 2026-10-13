@@ -18,6 +18,8 @@ letter. Rust rejects unknown fields.
 
 Rules:
 
+- Read `output-language-rules.md`. `cover_letter.body` uses the selected
+  language; an omitted language option means English.
 - `kind` must be `cover-letter-only`; `ai_host` must match the active adapter:
   `codex`, `claude`, or `gemini`.
 - `company`, `job_title`, `job_description`, and `cover_letter.body` must be
