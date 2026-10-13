@@ -1,74 +1,193 @@
-# Chapter 2 planning notes
+# Rolign Chapter 2 Implementation Plan
 
-## Goal
+**Status:** Draft 0.2  
+**Date:** 2026-10-13
 
-Improve public job-page extraction and support English or Indonesian output for
-both analysis and cover letters. English remains the default.
+## Delivery rules
 
-## Job-page extraction
+- [ ] Complete one phase per branch and pull request.
+- [ ] Start each phase from updated `main` after the previous phase is accepted.
+- [ ] Keep `skills/rolign/SKILL.md` as the only Rolign workflow source.
+- [ ] Keep adapters routing-only and Rust free of network or model calls.
+- [ ] Use synthetic fixtures only; never commit personal resume or job data.
+- [ ] Run formatting, build, clippy, and tests before every phase PR.
 
-`curl` returning HTML is a successful retrieval, not an extraction failure.
-The host should save that response only in an ignored temporary file, treat it
-as untrusted data, and extract job details in this order:
+## Phase 1: Contracts and fixtures
 
-1. Prefer schema.org `JobPosting` data from an
-   `<script type="application/ld+json">` block. Read the title, hiring
-   organization, and complete description.
-2. Otherwise extract visible job content while ignoring scripts, styles,
-   navigation, cookie notices, and unrelated page chrome.
-3. If the response contains only client-side application code, is blocked, or
-   lacks a complete description, ask for pasted company, title, and job text.
+### Tasks
 
-Never print or save raw HTML in history. Delete the temporary file after
-success or failure. Keep one retrieval attempt, retain the original URL, and
-continue treating retrieved text as data rather than instructions. Rust stays
-offline; do not add browser automation, site-specific APIs, access-control
-bypasses, or a Rust HTTP client.
+- [ ] Add the optional `--language en|id` grammar to `analyze` and `cover`.
+- [ ] Add the `future [--language en|id]` intent and help text.
+- [ ] Define the strict Future Resume JSON payload and validation rules.
+- [ ] Add synthetic English and Indonesian resume/job/aspiration fixtures.
+- [ ] Add synthetic JSON-LD, semantic HTML, JavaScript-only, and blocked-page
+      fixtures.
+- [ ] Document that English is the default and existing job save payloads stay
+      compatible.
 
-## Output language
+### Acceptance criteria
 
-- Support `en` and `id` for analysis prose and cover letters.
-- Default to `en` when the user does not choose a language.
-- Use the same selected language for an analysis and its cover letter.
-- Cover-only runs use the selected language for the cover letter.
-- Keep structured field names, score calculation, record metadata, company
-  names, job titles, resume evidence, and quoted keywords unchanged.
-- Never translate by inventing or broadening resume claims.
+- [ ] Every new input and output contract is represented by a synthetic fixture.
+- [ ] Existing fixture payloads still validate unchanged.
+- [ ] No history schema migration is introduced.
 
-Chapter 2 implementation must define the smallest host-level way to select the
-language without adding a second workflow per language.
+## Phase 2: Raw HTML extraction
 
-## Humanizer
+### Tasks
 
-Bundle a pinned, attributed project copy of
-[`blader/humanizer`](https://github.com/blader/humanizer) under its MIT license
-so Rolign users do not need a separate global installation.
+- [ ] Change URL retrieval to write one `curl` response to an ignored temporary
+      file instead of treating raw HTML as failure.
+- [ ] Extract schema.org `JobPosting` JSON-LD before inspecting visible content.
+- [ ] Fall back to visible semantic job content while ignoring scripts, styles,
+      navigation, consent notices, and embedded instructions.
+- [ ] Preserve the original URL and existing confirmation preview.
+- [ ] Delete the temporary HTML after every success or failure path.
+- [ ] Request pasted text for blocked, incomplete, ambiguous, or
+      JavaScript-only responses without retrying.
 
-Run Humanizer only as the final cover-letter editing pass. It must preserve the
-selected language and every grounded fact from the approved draft: company,
-role, employers, titles, dates, metrics, skills, and achievements. It must not
-add unsupported claims. Analysis prose does not use Humanizer.
+### Tests
 
-## Verification
+- [ ] Extract company, title, and complete description from JSON-LD.
+- [ ] Extract the same fields from semantic HTML.
+- [ ] Ignore page instructions and unrelated script content.
+- [ ] Verify invalid URLs make zero requests and valid URLs make one request.
+- [ ] Verify fallback creates no premature record or persistent raw HTML.
 
-- Extract a synthetic public job from `JobPosting` JSON-LD.
-- Extract a synthetic semantic HTML job page while ignoring embedded scripts
-  and instructions.
-- Fall back to pasted text for blocked, incomplete, and JavaScript-only pages
-  without saving raw HTML or premature history.
-- Verify omitted language produces English analysis and cover-letter prose.
-- Verify `id` produces Indonesian analysis and cover-letter prose while keeping
-  scores, evidence, names, metrics, and record structure unchanged.
-- Verify cover-only language selection.
-- Verify Humanizer preserves English and Indonesian language, source-backed
-  facts, and the existing cover-letter contract.
+### Acceptance criteria
 
-## Acceptance criteria
+- [ ] A raw HTML response containing structured or visible job content reaches
+      confirmation instead of being reported as inaccessible.
+- [ ] Protected or client-rendered pages produce one clear pasted-text fallback.
 
-- Raw HTML from a public page can become confirmed job context when it contains
-  structured or visible job content.
-- English is the default; users can choose Indonesian for both analysis and
-  cover-letter output.
-- Every saved cover letter receives the Humanizer pass without gaining facts
-  absent from `resume.md`.
-- Users need no Humanizer, MCP, browser-automation, or scraping-service setup.
+## Phase 3: English and Indonesian output
+
+### Tasks
+
+- [ ] Parse one optional language flag in the canonical workflow.
+- [ ] Default omitted language to `en`; reject unsupported or duplicate values.
+- [ ] Generate analysis and cover-letter prose in the selected language.
+- [ ] Keep scoring, structured field names, names, evidence, metrics, and quoted
+      keywords unchanged.
+- [ ] Apply the same language behavior to manual, URL, and cover-only flows.
+
+### Tests
+
+- [ ] Verify omitted language produces English analysis and cover letters.
+- [ ] Verify `--language id` produces Indonesian analysis and cover letters.
+- [ ] Verify both languages yield identical category scores for one fixture.
+- [ ] Verify translation adds no resume claim or job requirement.
+- [ ] Verify invalid language stops before saving.
+
+### Acceptance criteria
+
+- [ ] English and Indonesian workflows produce records accepted by the existing
+      Rust save path.
+- [ ] Existing commands without language flags retain English behavior.
+
+## Phase 4: Humanized cover letters
+
+### Tasks
+
+- [ ] Vendor a pinned copy of `blader/humanizer` with its MIT license,
+      attribution, upstream URL, and revision.
+- [ ] Make the canonical workflow read the bundled Humanizer instructions.
+- [ ] Run Humanizer only after the grounded cover-letter draft.
+- [ ] Provide the selected language and protected facts to the editing pass.
+- [ ] Compare protected facts before and after; stop without saving on changes
+      or unsupported additions.
+- [ ] Keep analysis and Future Resume outside the Humanizer pass.
+
+### Tests
+
+- [ ] Verify users need no global Humanizer installation.
+- [ ] Verify English and Indonesian cover letters retain language and facts.
+- [ ] Reject an edited draft that changes a name, role, date, metric, skill, or
+      achievement.
+- [ ] Verify analysis and Future Resume bypass Humanizer.
+
+### Acceptance criteria
+
+- [ ] Every saved cover letter has passed Humanizer and protected-fact checks.
+- [ ] Humanizer failure creates no history record.
+
+## Phase 5: Future Resume domain and storage
+
+### Tasks
+
+- [ ] Add typed language and Future Resume request models.
+- [ ] Validate a 5–10-year integer horizon, non-empty vision, and non-empty
+      target-position, skill, and achievement lists.
+- [ ] Add `save-future [--replace] [--workspace PATH]` to the Rust CLI.
+- [ ] Render localized Markdown headings and goal-oriented content.
+- [ ] Write `<workspace>/future-resume.md` through a sibling temporary file.
+- [ ] Refuse an existing destination unless `--replace` is present.
+- [ ] Preserve the previous complete file if validation or replacement fails.
+- [ ] Keep Future Resume outside `history/` and tracker output.
+
+### Tests
+
+- [ ] Validate both languages and horizon boundaries 5 and 10.
+- [ ] Reject horizons below 5 or above 10 and every empty required field.
+- [ ] Render complete English and Indonesian Markdown fixtures.
+- [ ] Create a new file without `--replace`.
+- [ ] Reject an existing file without changing it.
+- [ ] Replace only when explicitly requested and preserve the old file on
+      simulated failure.
+- [ ] Verify paths remain within the workspace and `resume.md` never changes.
+
+### Acceptance criteria
+
+- [ ] Rust can safely create and explicitly replace one `future-resume.md`.
+- [ ] No partial document, history record, or resume modification occurs.
+
+## Phase 6: Future Resume host workflow
+
+### Tasks
+
+- [ ] Route `rolign future [--language en|id]` through every host adapter.
+- [ ] Read and validate `resume.md` as current-state context.
+- [ ] Collect horizon, target positions, skills to develop, and target
+      achievements.
+- [ ] Draft aspirations as future goals, never current claims.
+- [ ] Show the complete Markdown preview and request write confirmation.
+- [ ] If the destination exists, request a separate explicit overwrite
+      confirmation before using `--replace`.
+- [ ] Submit the confirmed payload through the Rust save path and report the
+      resulting file.
+
+### Tests
+
+- [ ] Complete English and Indonesian Future Resume flows with synthetic data.
+- [ ] Stop without writing when required input or confirmation is missing.
+- [ ] Verify current resume facts and future aspirations remain distinct.
+- [ ] Verify Humanizer is not invoked.
+- [ ] Verify Codex, Claude Code, and Gemini CLI use the canonical workflow.
+
+### Acceptance criteria
+
+- [ ] A user can create a brief Future Resume in either language without
+      modifying `resume.md`.
+- [ ] Existing output can never be overwritten silently.
+
+## Phase 7: Chapter 2 hardening
+
+### Tasks
+
+- [ ] Run the full automated verification suite on a fresh clone.
+- [ ] Smoke-test help, URL/manual analysis, cover-only, tracker, record opening,
+      and Future Resume on all three authenticated hosts.
+- [ ] Verify English defaults and Indonesian selection on every generating
+      command.
+- [ ] Audit temporary files, Git ignores, logs, fixtures, and saved artifacts
+      for sensitive content.
+- [ ] Update README commands, privacy notes, limitations, and Humanizer
+      attribution.
+- [ ] Record host versions and verification evidence.
+
+### Acceptance criteria
+
+- [ ] Every Chapter 2 PRD success criterion has test or smoke-test evidence.
+- [ ] Existing Chapter 1 records remain readable.
+- [ ] A fresh user needs only stable Rust and one authenticated supported host.
+- [ ] No real resume, job posting, aspiration, credential, or raw HTML is
+      committed or logged.
