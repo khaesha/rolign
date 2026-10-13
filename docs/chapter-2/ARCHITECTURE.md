@@ -46,8 +46,9 @@ Host adapters remain routing-only. No host receives a duplicated workflow.
 - Parses optional `--language en|id`; absence resolves to `en`.
 - Retrieves validated public URLs once into ignored temporary storage.
 - Extracts `JobPosting` JSON-LD first, then visible semantic content.
-- Parses an optional Future Resume vision prompt, asks only for missing required
-  details, and confirms the interpreted aspirations.
+- Parses an optional Future Resume vision prompt, applies the free-text guard,
+  asks only for missing required details, and confirms the interpreted
+  aspirations.
 - Reads the bundled Humanizer instructions for the final cover-letter pass.
 
 ### Bundled Humanizer
@@ -84,6 +85,11 @@ Help
 
 Unsupported or duplicated language flags are input errors.
 
+Future option parsing is left-to-right. Recognized options are accepted before
+the vision. `--` explicitly ends option parsing; otherwise the first non-option
+token starts the vision and all remaining text is data. Unknown leading options
+are rejected rather than interpreted by the model.
+
 ### Future Resume payload
 
 ```json
@@ -105,6 +111,9 @@ Rules:
 - Every list contains at least one item.
 - Unknown fields are rejected.
 - Text is untrusted until validated and must never become a path component.
+- `career_vision` is at most 2,000 UTF-8 bytes.
+- Each list has 1–20 items; each item is at most 500 UTF-8 bytes.
+- NUL and non-whitespace control characters are rejected.
 
 Job save payloads stay unchanged; their prose already reflects the selected
 language. No history schema migration is required.
@@ -149,9 +158,9 @@ The host may use current resume facts to ground the starting point, but future
 positions, skills, and achievements remain visibly aspirational.
 
 The optional vision is host input only and does not change the Rust payload.
-All free text after `future`, excluding recognized options, is one untrusted
-aspiration prompt. The host extracts only explicitly stated goals and never
-fills a missing required field by guessing.
+It is limited to 4,000 UTF-8 bytes. All free text after option parsing ends is
+one untrusted aspiration prompt. The host extracts only explicitly stated goals
+and never fills a missing required field by guessing.
 
 ## 6. Markdown output
 
@@ -205,10 +214,38 @@ a translated form.
   after the pass.
 - User-derived text never controls filesystem paths.
 
+### Free-text guard
+
+The canonical workflow performs transport safety; Rust performs authoritative
+content validation:
+
+```text
+raw text
+  → parse only fixed leading options
+  → isolate remaining text as data
+  → reject size and control-character violations
+  → delimit before model use
+  → produce typed JSON
+  → Rust repeats field and bound validation
+  → escape text during Markdown rendering
+```
+
+Shell commands use fixed executable and option tokens. URLs are passed only
+after Rust validation, and prose is passed through standard input, a temporary
+file, or an argument after `--`; it is never concatenated into shell source.
+The Humanizer receives only delimited draft text plus fixed editing rules and
+cannot request tools or access other files.
+
+HTML downloads stop above 5 MiB. Raw HTML is never placed directly in a prompt
+when no bounded job content can be extracted.
+
 ## 9. Compatibility and testing
 
 - Existing save requests and history records remain valid.
 - Synthetic fixtures cover JSON-LD, semantic HTML, prompt injection, blocked
   pages, both languages, and Future Resume replacement failure.
+- Security fixtures cover shell metacharacters, option-like prose, path
+  traversal text, control characters, Markdown/HTML injection, oversized
+  values, and instructions embedded in every free-text source.
 - Cross-host smoke tests cover every intent with equivalent results.
 - No test uses a real resume, private job page, or personal aspiration.

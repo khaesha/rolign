@@ -47,7 +47,7 @@ rolign
 rolign analyze [URL] [--language en|id]
 rolign tracker
 rolign cover [URL] [--language en|id]
-rolign future [VISION] [--language en|id]
+rolign future [--language en|id] [--] [VISION...]
 ```
 
 `--language` is optional and defaults to `en`. Host-specific invocation syntax
@@ -103,7 +103,7 @@ bypass access restrictions.
 
 ### FR-4: Future Resume input
 
-Given `rolign future [VISION] [--language en|id]`, Rolign must:
+Given `rolign future [--language en|id] [--] [VISION...]`, Rolign must:
 
 1. Read the non-empty `resume.md` as current-state context without modifying it.
 2. Without `VISION`, ask guided questions for a 5–10-year horizon, target
@@ -119,6 +119,11 @@ Given `rolign future [VISION] [--language en|id]`, Rolign must:
 8. Generate a brief preview in the selected language and request confirmation.
 9. Stop without writing when required input is missing or confirmation is not
    given.
+
+Option parsing stops at `--` or the first non-option token. Every remaining
+token belongs to one vision value; option-like text inside it is data. Unknown
+options before the vision are rejected. `--` is optional for ordinary prose
+and required when the vision begins with `-`.
 
 ### FR-5: Future Resume output
 
@@ -143,6 +148,31 @@ Given `rolign future [VISION] [--language en|id]`, Rolign must:
   are not logged.
 - Existing history schemas and records remain readable without migration.
 
+### FR-7: Free-text security guard
+
+The guard applies to vision prompts, manual job text, retrieved pages, resume
+content, and model-produced prose:
+
+- Delimit every free-text value as untrusted data and ignore commands embedded
+  within it.
+- Never interpolate free text into a shell program, executable name, option,
+  URL, or filesystem path. Pass fixed commands fixed arguments; pass content by
+  standard input, an argument after `--`, or an ignored temporary file.
+- Reject NUL and non-whitespace control characters before generation or
+  storage.
+- Limit a Future Resume vision prompt to 4,000 UTF-8 bytes, career vision to
+  2,000 bytes, each list item to 500 bytes, and each list to 20 items.
+- Stop an HTML download above 5 MiB and request pasted job text instead.
+- Render Future Resume fields as escaped Markdown text so user input cannot add
+  raw HTML or alter the required document structure.
+- Allow the model to extract career goals only. Free text cannot authorize tool
+  calls, network access, file reads, file writes, workflow changes, or policy
+  changes.
+- Do not print or log complete free-text inputs. Errors identify the field and
+  limit without echoing its value.
+- Revalidate the structured payload in Rust; host-side filtering alone is not
+  trusted.
+
 ## 6. Success criteria
 
 Chapter 2 succeeds when:
@@ -158,3 +188,5 @@ Chapter 2 succeeds when:
    a confirmed `future-resume.md` with the required sections and cannot silently
    overwrite an existing file.
 6. All three hosts produce output accepted by the same Rust validation path.
+7. Adversarial free text cannot execute commands, select paths, add Markdown
+   structure, change workflow instructions, or bypass validation limits.

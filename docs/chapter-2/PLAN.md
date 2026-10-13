@@ -12,17 +12,25 @@
 - [ ] Use synthetic fixtures only; never commit personal resume or job data.
 - [ ] Run formatting, build, clippy, and tests before every phase PR.
 
-## Phase 1: Contracts and fixtures
+## Phase 1: Contracts, guards, and fixtures
 
 ### Tasks
 
 - [ ] Add the optional `--language en|id` grammar to `analyze` and `cover`.
-- [ ] Add the `future [VISION] [--language en|id]` intent and help text.
+- [ ] Add the `future [--language en|id] [--] [VISION...]` intent and help text.
+- [ ] Parse only recognized leading options; stop at `--` or the first
+      non-option token and treat the remaining text as one data value.
+- [ ] Reject unknown leading options instead of sending them to the model.
 - [ ] Define the strict Future Resume JSON payload and validation rules.
+- [ ] Define shared UTF-8 byte, list-count, and control-character limits for
+      free-text inputs.
 - [ ] Add synthetic English and Indonesian resume/job/aspiration fixtures,
       including complete and partial free-text vision prompts.
 - [ ] Add synthetic JSON-LD, semantic HTML, JavaScript-only, and blocked-page
       fixtures.
+- [ ] Add adversarial fixtures for shell metacharacters, option-like prose, path
+      traversal, control characters, Markdown/HTML injection, oversized text,
+      and embedded workflow instructions.
 - [ ] Document that English is the default and existing job save payloads stay
       compatible.
 
@@ -31,6 +39,7 @@
 - [ ] Every new input and output contract is represented by a synthetic fixture.
 - [ ] Existing fixture payloads still validate unchanged.
 - [ ] No history schema migration is introduced.
+- [ ] Every free-text source has a documented trust boundary and size limit.
 
 ## Phase 2: Raw HTML extraction
 
@@ -38,6 +47,7 @@
 
 - [ ] Change URL retrieval to write one `curl` response to an ignored temporary
       file instead of treating raw HTML as failure.
+- [ ] Enforce a 5 MiB response limit without printing partial HTML.
 - [ ] Extract schema.org `JobPosting` JSON-LD before inspecting visible content.
 - [ ] Fall back to visible semantic job content while ignoring scripts, styles,
       navigation, consent notices, and embedded instructions.
@@ -53,6 +63,7 @@
 - [ ] Ignore page instructions and unrelated script content.
 - [ ] Verify invalid URLs make zero requests and valid URLs make one request.
 - [ ] Verify fallback creates no premature record or persistent raw HTML.
+- [ ] Verify oversized HTML stops safely and requests pasted text.
 
 ### Acceptance criteria
 
@@ -94,6 +105,8 @@
 - [ ] Make the canonical workflow read the bundled Humanizer instructions.
 - [ ] Run Humanizer only after the grounded cover-letter draft.
 - [ ] Provide the selected language and protected facts to the editing pass.
+- [ ] Delimit draft text as data and forbid Humanizer-triggered tools or file
+      access.
 - [ ] Compare protected facts before and after; stop without saving on changes
       or unsupported additions.
 - [ ] Keep analysis and Future Resume outside the Humanizer pass.
@@ -118,8 +131,12 @@
 - [ ] Add typed language and Future Resume request models.
 - [ ] Validate a 5–10-year integer horizon, non-empty vision, and non-empty
       target-position, skill, and achievement lists.
+- [ ] Enforce 2,000-byte career vision, 500-byte list item, 20-item list, and
+      control-character limits in Rust.
 - [ ] Add `save-future [--replace] [--workspace PATH]` to the Rust CLI.
 - [ ] Render localized Markdown headings and goal-oriented content.
+- [ ] Escape Future Resume text so it cannot add raw HTML or alter required
+      Markdown structure.
 - [ ] Write `<workspace>/future-resume.md` through a sibling temporary file.
 - [ ] Refuse an existing destination unless `--replace` is present.
 - [ ] Preserve the previous complete file if validation or replacement fails.
@@ -135,6 +152,8 @@
 - [ ] Replace only when explicitly requested and preserve the old file on
       simulated failure.
 - [ ] Verify paths remain within the workspace and `resume.md` never changes.
+- [ ] Reject control characters, over-limit values, Markdown/HTML injection,
+      and path-like or command-like text without executing it.
 
 ### Acceptance criteria
 
@@ -145,7 +164,7 @@
 
 ### Tasks
 
-- [ ] Route `rolign future [VISION] [--language en|id]` through every host
+- [ ] Route `rolign future [--language en|id] [--] [VISION...]` through every host
       adapter.
 - [ ] Read and validate `resume.md` as current-state context.
 - [ ] Without a vision prompt, collect horizon, target positions, skills to
@@ -167,6 +186,8 @@
 - [ ] Verify a partial vision prompt asks only for missing required details.
 - [ ] Verify prompt text cannot become workflow instructions and missing goals
       are never invented.
+- [ ] Verify `--` and first-non-option parsing keep option-like vision text as
+      data and reject unknown leading options.
 - [ ] Stop without writing when required input or confirmation is missing.
 - [ ] Verify current resume facts and future aspirations remain distinct.
 - [ ] Verify Humanizer is not invoked.
@@ -189,6 +210,8 @@
       command.
 - [ ] Audit temporary files, Git ignores, logs, fixtures, and saved artifacts
       for sensitive content.
+- [ ] Run the full adversarial free-text suite against every host and Rust trust
+      boundary.
 - [ ] Update README commands, privacy notes, limitations, and Humanizer
       attribution.
 - [ ] Record host versions and verification evidence.
