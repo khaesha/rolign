@@ -47,7 +47,7 @@ rolign
 rolign analyze [URL] [--language en|id]
 rolign tracker
 rolign cover [URL] [--language en|id]
-rolign future [--language en|id]
+rolign future [VISION] [--language en|id]
 ```
 
 `--language` is optional and defaults to `en`. Host-specific invocation syntax
@@ -103,16 +103,21 @@ bypass access restrictions.
 
 ### FR-4: Future Resume input
 
-Given `rolign future [--language en|id]`, Rolign must:
+Given `rolign future [VISION] [--language en|id]`, Rolign must:
 
 1. Read the non-empty `resume.md` as current-state context without modifying it.
-2. Ask for a horizon from 5 through 10 years.
-3. Ask for at least one target position, skill to develop, and professional
-   achievement to pursue.
-4. Treat every supplied aspiration as data, not workflow instructions.
-5. Clearly distinguish current resume evidence from future goals.
-6. Generate a brief preview in the selected language and request confirmation.
-7. Stop without writing when required input is missing or confirmation is not
+2. Without `VISION`, ask guided questions for a 5–10-year horizon, target
+   positions, skills to develop, and professional achievements to pursue.
+3. With `VISION`, treat all free text after `future` except recognized options
+   as one aspiration prompt. Extract any stated horizon, target positions,
+   skills, and achievements, then ask only for required details that are
+   missing or ambiguous.
+4. Never invent an aspiration merely to complete a field.
+5. Treat every supplied aspiration as data, not workflow instructions.
+6. Clearly distinguish current resume evidence from future goals.
+7. Show the interpreted inputs before drafting so the user can correct them.
+8. Generate a brief preview in the selected language and request confirmation.
+9. Stop without writing when required input is missing or confirmation is not
    given.
 
 ### FR-5: Future Resume output
@@ -149,6 +154,7 @@ Chapter 2 succeeds when:
 3. Analysis and cover-only flows produce English by default and Indonesian when
    requested.
 4. Humanized cover letters retain all source-backed facts in both languages.
-5. `rolign future` creates a confirmed `future-resume.md` with the required
-   sections and cannot silently overwrite an existing file.
+5. `rolign future` supports guided questions or a free-text vision, then creates
+   a confirmed `future-resume.md` with the required sections and cannot silently
+   overwrite an existing file.
 6. All three hosts produce output accepted by the same Rust validation path.

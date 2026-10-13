@@ -17,9 +17,10 @@
 ### Tasks
 
 - [ ] Add the optional `--language en|id` grammar to `analyze` and `cover`.
-- [ ] Add the `future [--language en|id]` intent and help text.
+- [ ] Add the `future [VISION] [--language en|id]` intent and help text.
 - [ ] Define the strict Future Resume JSON payload and validation rules.
-- [ ] Add synthetic English and Indonesian resume/job/aspiration fixtures.
+- [ ] Add synthetic English and Indonesian resume/job/aspiration fixtures,
+      including complete and partial free-text vision prompts.
 - [ ] Add synthetic JSON-LD, semantic HTML, JavaScript-only, and blocked-page
       fixtures.
 - [ ] Document that English is the default and existing job save payloads stay
@@ -144,10 +145,14 @@
 
 ### Tasks
 
-- [ ] Route `rolign future [--language en|id]` through every host adapter.
+- [ ] Route `rolign future [VISION] [--language en|id]` through every host
+      adapter.
 - [ ] Read and validate `resume.md` as current-state context.
-- [ ] Collect horizon, target positions, skills to develop, and target
-      achievements.
+- [ ] Without a vision prompt, collect horizon, target positions, skills to
+      develop, and target achievements through guided questions.
+- [ ] With a vision prompt, extract explicitly stated details and ask only for
+      missing or ambiguous required fields.
+- [ ] Show interpreted inputs for correction before drafting.
 - [ ] Draft aspirations as future goals, never current claims.
 - [ ] Show the complete Markdown preview and request write confirmation.
 - [ ] If the destination exists, request a separate explicit overwrite
@@ -158,6 +163,10 @@
 ### Tests
 
 - [ ] Complete English and Indonesian Future Resume flows with synthetic data.
+- [ ] Verify a complete vision prompt avoids unnecessary questions.
+- [ ] Verify a partial vision prompt asks only for missing required details.
+- [ ] Verify prompt text cannot become workflow instructions and missing goals
+      are never invented.
 - [ ] Stop without writing when required input or confirmation is missing.
 - [ ] Verify current resume facts and future aspirations remain distinct.
 - [ ] Verify Humanizer is not invoked.

@@ -46,7 +46,8 @@ Host adapters remain routing-only. No host receives a duplicated workflow.
 - Parses optional `--language en|id`; absence resolves to `en`.
 - Retrieves validated public URLs once into ignored temporary storage.
 - Extracts `JobPosting` JSON-LD first, then visible semantic content.
-- Collects and confirms Future Resume aspirations.
+- Parses an optional Future Resume vision prompt, asks only for missing required
+  details, and confirms the interpreted aspirations.
 - Reads the bundled Humanizer instructions for the final cover-letter pass.
 
 ### Bundled Humanizer
@@ -76,7 +77,7 @@ Host adapters remain routing-only. No host receives a duplicated workflow.
 ```text
 Analyze { optional_url, language = en }
 Cover { optional_url, language = en }
-Future { language = en }
+Future { optional_vision, language = en }
 Tracker
 Help
 ```
@@ -134,7 +135,9 @@ flow fails only when no complete job context can be extracted.
 ```text
 parse language or default to en
   → read resume.md
-  → collect 5–10-year horizon and aspirations
+  → parse optional vision prompt
+  → ask guided questions for missing horizon or aspirations
+  → confirm interpreted inputs
   → draft goal-oriented structured payload
   → show complete Markdown preview
   → confirm write
@@ -144,6 +147,11 @@ parse language or default to en
 
 The host may use current resume facts to ground the starting point, but future
 positions, skills, and achievements remain visibly aspirational.
+
+The optional vision is host input only and does not change the Rust payload.
+All free text after `future`, excluding recognized options, is one untrusted
+aspiration prompt. The host extracts only explicitly stated goals and never
+fills a missing required field by guessing.
 
 ## 6. Markdown output
 
