@@ -48,17 +48,19 @@ normal local tool operations.
 | Claude Code | `/rolign analyze [URL] [--language en|id]` |
 | Gemini CLI | `/rolign analyze [URL] [--language en|id]` |
 
-All hosts also support `cover [URL]` and `tracker`. Tracker accepts a follow-up
-`open <record-id>` request. Gemini users should run `/commands reload` after
+All hosts also support `cover [URL]` and `tracker`. After listing records,
+tracker shows `open <record-id>` with an example using the newest record.
+Gemini users should run `/commands reload` after
 pulling adapter changes or restart Gemini CLI. Each host validates URLs, uses
 its browser/web capability or one ordinary HTTP request, asks for confirmation,
 and falls back to pasted text without saving a premature record.
 
-`future [--language en|id] [--] [VISION...]` turns a career direction into a
-resume-style future profile. Missing horizon defaults to five years; missing
-skills and achievements become editable role-relevant suggestions in the
-preview. It asks separately before replacing `future-resume.md`, never rewrites
-`resume.md`, and never adds a tracker record.
+`future [--language en|id] [--] [VISION...]` turns a career direction into an
+advisor-style future profile. It explains the transition, development
+priorities, and how each recommended capability or achievement supports the
+target role. Missing horizon defaults to five years. It asks separately before
+replacing `future-resume.md`, never rewrites `resume.md`, and never adds a
+tracker record.
 
 Commands:
 
@@ -82,6 +84,9 @@ and existing history records stay compatible.
   background network activity.
 - Public job-page retrieval is attempted once only. Login-gated, incomplete,
   or unavailable pages require pasted job text.
+- Hosts may display commands, tool calls, permission prompts, or their own
+  progress UI. Rolign cannot hide host-owned UI; it adds short, non-sensitive
+  stage updates while work is running.
 - Future Resume aspirations and recommendations are not current qualifications.
   Review, edit, or remove every suggested goal before saving.
 - Rolign bundles the MIT-licensed [Humanizer attribution](skills/rolign/vendor/humanizer/ATTRIBUTION.md)

@@ -230,3 +230,8 @@
 - [x] Resolve a Product/Project Manager vision to Product Manager primary role.
 - [x] Recommend editable role-relevant capabilities and achievements.
 - [x] Render a localized resume-style future profile without current-fact claims.
+- [x] Expand the profile and recommendations with practical career-advisor
+      rationale and development guidance.
+- [x] Add non-sensitive progress stages and tracker record-opening guidance.
+- [x] Complete Codex user smoke testing; defer Claude Code and Gemini CLI smoke
+      testing to the remaining release gate.

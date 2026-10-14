@@ -118,7 +118,8 @@ Given `rolign future [--language en|id] [--] [VISION...]`, Rolign must:
 5. Treat every supplied aspiration as data, not workflow instructions.
 6. Clearly distinguish current resume evidence from future goals.
 7. Show the interpreted inputs before drafting so the user can correct them.
-8. Generate a brief preview in the selected language and request confirmation.
+8. Generate a career-advisor preview in the selected language and request
+   confirmation.
 9. Stop without writing when no usable career direction or confirmation is
    given.
 
@@ -132,6 +133,10 @@ and required when the vision begins with `-`.
 - The output path is `<workspace>/future-resume.md`.
 - The document presents a resume-style future professional profile, target
   position, capabilities to build, and target achievements.
+- The professional profile uses 3–5 sentences to explain the transition,
+  transferable current experience, development priorities, and realistic
+  progression. Capability and achievement items explain why they matter and
+  how they can be developed or demonstrated.
 - A missing horizon defaults to 5 years. A Product/Project Manager direction
   resolves to Product Manager as the primary target, with Project Manager as an
   optional adjacent direction.
@@ -152,6 +157,8 @@ and required when the vision begins with `-`.
 - Raw HTML, prompts, resumes, temporary payloads, and complete model responses
   are not logged.
 - Existing history schemas and records remain readable without migration.
+- The canonical workflow emits short, non-sensitive stage updates. Host-owned
+  command, tool-call, permission, and progress UI may remain visible.
 
 ### FR-7: Free-text security guard
 

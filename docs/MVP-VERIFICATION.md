@@ -65,11 +65,12 @@ fixture references use only `example.test` and synthetic text.
 
 | Host | Version | Evidence | Status |
 | --- | --- | --- | --- |
-| Codex | 0.162.1 | Authenticated help command passed in an ephemeral synthetic clone. Automated multi-step smoke session stopped before workflow execution. | Partial; rerun required |
+| Codex | 0.162.1 | User-tested help, URL analysis, cover-only, tracker, record opening, and Future Resume workflows on 2026-10-14. | Passed |
 | Claude Code | 2.1.275 | Installed; no authenticated smoke run requested. | Pending manual run |
 | Gemini CLI | 0.59.0 | Installed; no authenticated smoke run requested. | Pending manual run |
 
-The full Chapter 2 host matrix remains a release gate. Record only compact
+Claude Code and Gemini CLI remain pending by explicit product decision. The
+full Chapter 2 host matrix remains a release gate. Record only compact
 pass/fail summaries and versions; do not retain prompts, resumes, job text,
 raw HTML, credentials, or model responses as verification evidence.
 

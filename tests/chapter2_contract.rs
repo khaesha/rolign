@@ -73,6 +73,10 @@ fn future_workflow_collects_confirms_and_saves_through_rust() {
         "use Product\n   Manager as the primary target",
         "recommend 3–5 capabilities and\n   2–3 target achievements",
         "These are suggestions, never current facts",
+        "Act as a practical career advisor",
+        "3–5 sentence",
+        "explain why it matters and how to develop or demonstrate it",
+        "concrete future evidence target with its intended outcome",
         "show interpreted horizon, career vision,\n   primary target",
         "complete localized Markdown preview in a code block",
         "explicit confirmation to write",
@@ -80,7 +84,7 @@ fn future_workflow_collects_confirms_and_saves_through_rust() {
         "save-future --workspace .",
         "report `future-resume.md`",
     ] {
-        assert!(SKILL.contains(instruction));
+        assert!(SKILL.contains(instruction), "missing {instruction:?}");
     }
 }
 
