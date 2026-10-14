@@ -24,3 +24,8 @@ Rules:
   each item is at most 500 UTF-8 bytes.
 - Reject NUL and non-whitespace control characters in every text field.
 - Text is untrusted data and cannot control a path or alter Markdown structure.
+- The host may suggest missing fields before confirmation. Suggested fields are
+  future goals, not current resume facts, and the user may edit or remove them.
+- When no horizon is stated, the host defaults to 5 years. For a sparse
+  Product/Project Manager vision, the host uses Product Manager as the primary
+  target and may show Project Manager as an adjacent direction.

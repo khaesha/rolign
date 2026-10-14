@@ -51,6 +51,22 @@ fn canonical_skill_routes_every_intent() {
 }
 
 #[test]
+fn canonical_workflow_reports_safe_progress_stages() {
+    for instruction in [
+        "Preparing input...",
+        "Retrieving job details...",
+        "Analyzing resume and drafting...",
+        "Drafting your\ncareer-advisor plan...",
+        "Validating and saving...",
+        "Loading saved\nrecords...",
+        "never claim\nRolign can hide or replace that host-owned interface",
+        "Never include resume,\njob, aspiration, payload, URL, or credential content",
+    ] {
+        assert!(CANONICAL_SKILL.contains(instruction));
+    }
+}
+
+#[test]
 fn url_analysis_is_validated_confirmed_and_safe() {
     for instruction in [
         "validate-url",
@@ -133,6 +149,7 @@ fn tracker_workflow_renders_and_opens_only_listed_records() {
         "show `—` for a missing score or job URL",
         "corrupt-record warnings",
         "open <record-id>",
+        "example using the newest returned record ID",
         "exact returned ID",
         "compact header",
         "date, company, role, and original URL",

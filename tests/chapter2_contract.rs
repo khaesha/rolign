@@ -8,6 +8,7 @@ const COVER_REQUEST: &str = include_str!("fixtures/cover-request.json");
 const COVER_REQUEST_ID: &str = include_str!("fixtures/cover-request-id.json");
 const COMPLETE_VISION: &str = include_str!("fixtures/chapter-2/future-vision-complete.txt");
 const PARTIAL_VISION: &str = include_str!("fixtures/chapter-2/future-vision-partial.txt");
+const SPARSE_VISION: &str = include_str!("fixtures/chapter-2/future-vision-sparse.txt");
 const RESUME_EN: &str = include_str!("fixtures/chapter-2/resume-en.md");
 const RESUME_ID: &str = include_str!("fixtures/chapter-2/resume-id.md");
 const JOB_EN: &str = include_str!("fixtures/chapter-2/job-en.md");
@@ -68,16 +69,22 @@ fn future_contract_has_strict_shape_and_limits() {
 #[test]
 fn future_workflow_collects_confirms_and_saves_through_rust() {
     for instruction in [
-        "ask separately for the horizon, target positions, skills to",
-        "ask only for\n   missing or ambiguous required details",
-        "show\n   interpreted horizon, career vision, target positions, skills, and",
+        "With no stated horizon, default to 5 years",
+        "use Product\n   Manager as the primary target",
+        "recommend 3–5 capabilities and\n   2–3 target achievements",
+        "These are suggestions, never current facts",
+        "Act as a practical career advisor",
+        "3–5 sentence",
+        "explain why it matters and how to develop or demonstrate it",
+        "concrete future evidence target with its intended outcome",
+        "show interpreted horizon, career vision,\n   primary target",
         "complete localized Markdown preview in a code block",
         "explicit confirmation to write",
         "separate explicit overwrite confirmation",
         "save-future --workspace .",
         "report `future-resume.md`",
     ] {
-        assert!(SKILL.contains(instruction));
+        assert!(SKILL.contains(instruction), "missing {instruction:?}");
     }
 }
 
@@ -87,7 +94,7 @@ fn future_workflow_keeps_aspirations_untrusted_and_distinct() {
         "over 4,000 UTF-8\n   bytes",
         "a vision beginning with `-` requires `--`",
         "Do not turn current facts into\n   future aspirations",
-        "Do not\n   guess a missing goal",
+        "Ask only when no usable career direction can be extracted",
         "goal-oriented language",
         "Do not run Humanizer",
         "Do not pass `--replace` without\n   that second confirmation",
@@ -125,6 +132,7 @@ fn chapter_two_fixtures_cover_happy_and_fallback_inputs() {
     assert!(JOB_ID.contains("membutuhkan"));
     assert!(COMPLETE_VISION.contains("seven years"));
     assert!(PARTIAL_VISION.contains("platform engineering leader"));
+    assert!(SPARSE_VISION.contains("Product/Project Manager"));
     assert!(JSON_LD_PAGE.contains("JobPosting"));
     assert!(JSON_LD_PAGE.contains("hiringOrganization"));
     assert!(SEMANTIC_PAGE.contains("Job description"));

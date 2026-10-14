@@ -47,8 +47,8 @@ Host adapters remain routing-only. No host receives a duplicated workflow.
 - Retrieves validated public URLs once into ignored temporary storage.
 - Extracts `JobPosting` JSON-LD first, then visible semantic content.
 - Parses an optional Future Resume vision prompt, applies the free-text guard,
-  asks only for missing required details, and confirms the interpreted
-  aspirations.
+  defaults a missing horizon to 5 years, recommends editable role-relevant
+  goals, and confirms the interpreted aspirations.
 - Reads the bundled Humanizer instructions for the final cover-letter pass.
 
 ### Bundled Humanizer
@@ -145,7 +145,7 @@ flow fails only when no complete job context can be extracted.
 parse language or default to en
   → read resume.md
   → parse optional vision prompt
-  → ask guided questions for missing horizon or aspirations
+  → default missing horizon to 5 years and recommend missing development goals
   → confirm interpreted inputs
   → draft goal-oriented structured payload
   → show complete Markdown preview
@@ -155,12 +155,14 @@ parse language or default to en
 ```
 
 The host may use current resume facts to ground the starting point, but future
-positions, skills, and achievements remain visibly aspirational.
+positions, skills, and achievements remain visibly aspirational. Missing
+skills and achievements may be role-relevant suggestions, not claimed resume
+gaps; the user can edit or remove them before confirmation.
 
 The optional vision is host input only and does not change the Rust payload.
 It is limited to 4,000 UTF-8 bytes. All free text after option parsing ends is
-one untrusted aspiration prompt. The host extracts only explicitly stated goals
-and never fills a missing required field by guessing.
+one untrusted aspiration prompt. The host extracts explicitly stated goals and
+may add documented role-relevant suggestions, clearly marked for user review.
 
 ## 6. Markdown output
 
@@ -169,17 +171,17 @@ Rust renders a short document with localized headings equivalent to:
 ```md
 # Future Resume
 
-**Horizon:** 7 years
+**Target horizon:** 5 years
 
-## Career vision
+## Future professional profile
 
 ...
 
-## Target positions
+## Target position
 
-- ...
+**Primary target:** ...
 
-## Skills to develop
+## Capabilities to build
 
 - ...
 

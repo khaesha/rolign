@@ -175,7 +175,9 @@ Each row must contain:
 - Job-post link when available.
 - Record ID.
 
-The user must be able to ask the host to open a record by ID and view its saved Markdown files.
+The tracker must tell the user to reply with `open <record-id>` and show an
+example using the newest returned ID. The user must be able to ask the host to
+open a record by ID and view its saved Markdown files.
 
 ### FR-8: Resume source
 
