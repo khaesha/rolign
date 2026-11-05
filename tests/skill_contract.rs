@@ -144,9 +144,13 @@ fn cover_only_contract_excludes_analysis() {
 #[test]
 fn tracker_workflow_renders_and_opens_only_listed_records() {
     for instruction in [
+        "target/debug/rolign list --workspace .",
+        "avoid Cargo startup time",
+        "5 Oct 2026, 15:05 PM",
         "Markdown table",
         "Score, Job link, and ID",
-        "show `—` for a missing score or job URL",
+        "missing score or job URL",
+        "without analyzing or summarizing the records",
         "corrupt-record warnings",
         "open <record-id>",
         "example using the newest returned record ID",
@@ -156,8 +160,12 @@ fn tracker_workflow_renders_and_opens_only_listed_records() {
         "Never render `resume-snapshot.md`",
         "Never accept a path or ID",
     ] {
-        assert!(CANONICAL_SKILL.contains(instruction));
+        assert!(
+            CANONICAL_SKILL.contains(instruction),
+            "missing tracker instruction: {instruction}"
+        );
     }
+    assert!(CANONICAL_SKILL.contains("cargo run --quiet -- list --workspace ."));
 }
 
 #[test]

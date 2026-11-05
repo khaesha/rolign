@@ -167,7 +167,7 @@ Given `rolign tracker`, Rolign must list saved records newest first.
 
 Each row must contain:
 
-- Date.
+- Date formatted like `5 Oct 2026, 15:05 PM`.
 - Record type.
 - Company.
 - Job title.
