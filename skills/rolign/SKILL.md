@@ -245,7 +245,14 @@ Humanizer never processes analysis prose or Future Resume content.
 
 ## Tracker
 
-1. Run:
+1. If `target/debug/rolign` exists and is executable, run the already-built
+   read-only listing command directly to avoid Cargo startup time:
+
+   ```bash
+   target/debug/rolign list --workspace .
+   ```
+
+   Otherwise run:
 
    ```bash
    cargo run --quiet -- list --workspace .
@@ -253,9 +260,10 @@ Humanizer never processes analysis prose or Future Resume content.
 
 2. Render the returned records in a newest-first Markdown table with Date,
    Type, Company, Role, Score, Job link, and ID columns. Use the returned
-   `created_at` as Date; show `—` for a missing score or job URL, and render a
-   present URL as a Markdown link. Keep `cover-letter-only` distinguishable
-   from `analysis`.
+   `created_at` as Date, formatted like `5 Oct 2026, 15:05 PM`. Show `—` for a
+   missing score or job URL, and render a present URL as a Markdown link. Keep
+   `cover-letter-only` distinguishable from `analysis`. Return the table
+   directly without analyzing or summarizing the records.
 3. If records exist, show `To view a record, reply: open <record-id>` followed
    by an example using the newest returned record ID. If there are no records,
    say so and omit the opening instructions.
